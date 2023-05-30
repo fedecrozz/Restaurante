@@ -216,6 +216,7 @@ public class Mesa extends JFrame {
 		contentPane.add(btnNewButton_1_1);
 		
 		textField = new JTextField();
+		textField.setBorder(new TitledBorder(null, "Nota", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		textField.setBounds(10, 624, 337, 46);
 		contentPane.add(textField);
 		textField.setColumns(10);
