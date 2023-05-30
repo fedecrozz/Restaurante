@@ -59,6 +59,7 @@ public class Principal extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				Mesa m = new Mesa();
 				m.setVisible(true);
+				btnNewButton.setBackground(Color.red);
 			}
 		});
 		btnNewButton.setBounds(193, 107, 90, 90);
@@ -164,6 +165,14 @@ public class Principal extends JFrame {
 		btnNewButton_13.setBounds(393, 107, 90, 90);
 		contentPane.add(btnNewButton_13);
 		
+		JButton btnNewButton_11_1 = new JButton("PARA LLEVAR");
+		btnNewButton_11_1.setBounds(49, 585, 122, 90);
+		contentPane.add(btnNewButton_11_1);
+		
+		JButton btnNewButton_11_1_1 = new JButton("DELIVERY");
+		btnNewButton_11_1_1.setBounds(193, 585, 122, 90);
+		contentPane.add(btnNewButton_11_1_1);
+		
 		iniciarTodo();
 	}
 
@@ -190,5 +199,4 @@ public class Principal extends JFrame {
 	public void maximizar() {
 		setExtendedState(java.awt.Frame.MAXIMIZED_BOTH);
 	}
-
 }

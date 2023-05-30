@@ -19,11 +19,13 @@ import java.awt.Color;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import java.awt.SystemColor;
+import javax.swing.JTextField;
 
 public class Mesa extends JFrame {
 
 	private JPanel contentPane;
 	private JTable table;
+	private JTextField textField;
 
 	/**
 	 * Launch the application.
@@ -64,7 +66,7 @@ public class Mesa extends JFrame {
 			new Object[][] {
 			},
 			new String[] {
-				"Hora", "Articulo", "Cant", "Descripcion", "Precio", "Total"
+				"Hora", "Articulo", "Cant", "Descripcion", "Precio", "Total", "Observacion"
 			}
 		));
 		scrollPane.setViewportView(table);
@@ -212,6 +214,11 @@ public class Mesa extends JFrame {
 		JButton btnNewButton_1_1 = new JButton("$");
 		btnNewButton_1_1.setBounds(1187, 164, 67, 55);
 		contentPane.add(btnNewButton_1_1);
+		
+		textField = new JTextField();
+		textField.setBounds(10, 624, 337, 46);
+		contentPane.add(textField);
+		textField.setColumns(10);
 		
 		iniciarTodo();
 	}
