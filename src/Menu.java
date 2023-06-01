@@ -82,6 +82,7 @@ public class Menu extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				Combos c = new Combos();
 				c.setVisible(true);
+				System.out.println();
 			}
 		});
 		mnNewMenu.add(mntmNewMenuItem_2);

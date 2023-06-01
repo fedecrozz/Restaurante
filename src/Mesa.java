@@ -3,12 +3,16 @@
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.EmptyBorder;
+import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
 import javax.swing.JScrollPane;
 import javax.swing.JLabel;
@@ -16,7 +20,12 @@ import javax.swing.SwingConstants;
 import java.awt.Font;
 import javax.swing.border.TitledBorder;
 import java.awt.Color;
+import java.awt.Component;
+
+import javax.swing.table.DefaultTableCellRenderer;
+
 import javax.swing.JTable;
+import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableModel;
 import java.awt.SystemColor;
 import javax.swing.JTextField;
@@ -26,6 +35,9 @@ public class Mesa extends JFrame {
 	private JPanel contentPane;
 	private JTable table;
 	private JTextField textField;
+	private JScrollPane scrollPane_1;
+	private JTable table_1;
+	private Conector con = new Conector();
 
 	/**
 	 * Launch the application.
@@ -70,11 +82,6 @@ public class Mesa extends JFrame {
 			}
 		));
 		scrollPane.setViewportView(table);
-		
-		JPanel panel_1 = new JPanel();
-		panel_1.setBorder(new TitledBorder(null, "", TitledBorder.LEADING, TitledBorder.TOP, null, Color.BLACK));
-		panel_1.setBounds(10, 95, 337, 518);
-		contentPane.add(panel_1);
 		
 		JLabel lblNewLabel_1 = new JLabel("$0.00");
 		lblNewLabel_1.setForeground(new Color(0, 255, 255));
@@ -221,13 +228,188 @@ public class Mesa extends JFrame {
 		contentPane.add(textField);
 		textField.setColumns(10);
 		
+		scrollPane_1 = new JScrollPane();
+		scrollPane_1.setBounds(10, 95, 337, 518);
+		contentPane.add(scrollPane_1);
+		
+		table_1 = new JTable();
+		scrollPane_1.setViewportView(table_1);
+		
 		iniciarTodo();
+		
+		
 	}
 
 	public void iniciarTodo() {		
 		centrar();
 		setearApariencia();
+		iniciarBotonesArticulos();
 	}
+	
+	public void iniciarBotonesArticulos() {
+		
+		ArrayList<JButton> buttonList = new ArrayList<>();
+		
+		con.conectar();
+		ArrayList<Articulo> articulos = con.getArticulos();
+		con.cerrarConexion();
+		
+		
+		for (int i = 0; i < articulos.size(); i++) {
+		    final int index = i;
+		    final String descripcion = articulos.get(index).getDescripcion();
+		    final String precio = "$500";
+		    buttonList.add(createButton("<html><center>"+descripcion+"<br>"+precio+"<html><center>", e -> metodoEspecifico(articulos.get(index).getDescripcion())));            
+		}
+		
+        //buttonList.add(createButton("Bebidas", e -> metodoEspecifico(2)));
+        //buttonList.add(createButton("Postres", e -> metodoEspecifico(3)));
+        //buttonList.add(createButton("Cafeteria", e -> metodoEspecifico(3)));
+
+        for (JButton button : buttonList) {
+        	scrollPane_1.add(button);
+        }
+        
+		MyTableModel model = new MyTableModel(buttonList);
+        
+        table_1.setModel(model);
+        
+        // Crear la lista de objetos
+        
+        
+        ButtonRenderer buttonRenderer = new ButtonRenderer();
+        buttonRenderer.setFont(new Font("Arial", Font.BOLD, 18));
+        table_1.setDefaultRenderer(Object.class, buttonRenderer);
+
+        // Personalizar el editor de las celdas para permitir la interacción con los botones
+        table_1.setDefaultEditor(Object.class, new ButtonEditor());
+        
+        table_1.setRowHeight(100);
+        
+        
+	}
+	
+	
+	// Método para crear un botón con un texto y acción específicos
+	private static JButton createButton(String text, ActionListener actionListener) {
+        JButton button = new JButton(text);
+        button.addActionListener(actionListener);
+        return button;
+    }
+    
+	
+    // Interfaz funcional genérica para representar ActionListener
+    @FunctionalInterface
+    private interface MyActionListener extends ActionListener {
+        @Override
+        void actionPerformed(ActionEvent e);
+    }
+	
+	
+ // Método específico para cada botón
+    private static void metodoEspecifico(String nombreBoton) {
+        System.out.println("Botón " + nombreBoton + " presionado.");
+    }
+	
+	// Clase de modelo de datos personalizado
+    static class MyTableModel extends AbstractTableModel {
+        private ArrayList<JButton> buttonList;
+        private String[] columnNames = {""};
+
+        public MyTableModel(ArrayList<JButton> buttonList) {
+            this.buttonList = buttonList;
+        }
+
+        @Override
+        public int getRowCount() {
+            return buttonList.size();
+        }
+
+        @Override
+        public int getColumnCount() {
+            return columnNames.length;
+        }
+
+        @Override
+        public Object getValueAt(int row, int col) {
+            return buttonList.get(row);
+        }
+
+        @Override
+        public String getColumnName(int col) {
+            return columnNames[col];
+        }
+
+        @Override
+        public boolean isCellEditable(int row, int col) {
+            return true;
+        }
+
+        @Override
+        public void setValueAt(Object value, int row, int col) {
+            // No es necesario implementar este método para botones
+        }
+    }
+
+    // Clase de renderizado personalizado para mostrar los botones en las celdas
+    static class ButtonRenderer extends DefaultTableCellRenderer {
+        private Font font;
+
+        public ButtonRenderer() {
+            setHorizontalAlignment(SwingConstants.CENTER);
+        }
+
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
+                                                       boolean hasFocus, int row, int column) {
+            if (value instanceof Component) {
+                Component component = (Component) value;
+                if (font != null) {
+                    component.setFont(font);
+                }
+                return component;
+            } else {
+                return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+            }
+        }
+
+        public void setFont(Font font) {
+            this.font = font;
+        }
+    }
+
+    // Clase de editor personalizado para permitir la interacción con los botones en las celdas
+    static class ButtonEditor extends DefaultCellEditor {
+        private JButton button;
+
+        public ButtonEditor() {
+            super(new JTextField());
+            setClickCountToStart(1);
+
+            button = new JButton();
+            button.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    fireEditingStopped();
+                }
+            });
+        }
+
+        @Override
+        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected,
+                                                     int row, int column) {
+            if (value instanceof Component) {
+                button = (JButton) value;
+            }
+
+            return button;
+        }
+
+        @Override
+        public Object getCellEditorValue() {
+            return button;
+        }
+    }
 	
 	public void setearApariencia() {
 		try {

@@ -13,12 +13,15 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JSeparator;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class Articulos extends JFrame {
 
 	private JPanel contentPane;
 	private JTable table;
 	private JTextField textField;
+	private Conector con = new Conector();
 
 	/**
 	 * Launch the application.
@@ -106,10 +109,10 @@ public class Articulos extends JFrame {
 		table = new JTable();
 		table.setModel(new DefaultTableModel(
 			new Object[][] {
-				{null, null, null, null, null, null, null, null},
+				{null, null, null, null, null, null, null, null, null},
 			},
 			new String[] {
-				"Codigo", "Descripcion", "Categoria", "Precio", "Costo", "Ganancia", "Stock", "Observacion"
+				"Codigo", "Descripcion", "Categoria", "Precio", "Precio 2", "Costo", "Ganancia", "Stock", "Observacion"
 			}
 		));
 		scrollPane.setViewportView(table);
@@ -120,6 +123,11 @@ public class Articulos extends JFrame {
 		panel_1.setLayout(null);
 		
 		JButton btnNewButton = new JButton("Agregar Articulo");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				articuloNuevo();
+			}
+		});
 		btnNewButton.setBounds(147, 11, 218, 46);
 		panel_1.add(btnNewButton);
 		
@@ -131,4 +139,10 @@ public class Articulos extends JFrame {
 		btnEliminarArticulo.setBounds(877, 11, 218, 46);
 		panel_1.add(btnEliminarArticulo);
 	}
+	
+	public void articuloNuevo() {
+		ArticuloNuevo a = new ArticuloNuevo(this,con);
+		a.setVisible(true);
+	}
+	
 }
