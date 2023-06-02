@@ -35,9 +35,13 @@ public class Mesa extends JFrame {
 	private JPanel contentPane;
 	private JTable table;
 	private JTextField textField;
-	private JScrollPane scrollPane_1;
-	private JTable table_1;
-	private Conector con = new Conector();
+	private static JScrollPane scrollPane_1;
+	private static JTable table_1;
+	private static Conector con = new Conector();
+	private static JScrollPane scrollPane_2;
+	private static JTable table_2;
+	private static ArrayList<ArticuloMesa> articulosMesa= new ArrayList();
+	private static int numeroMesa=0;
 
 	/**
 	 * Launch the application.
@@ -70,7 +74,7 @@ public class Mesa extends JFrame {
 		contentPane.setLayout(null);
 		
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(357, 95, 820, 518);
+		scrollPane.setBounds(446, 95, 731, 518);
 		contentPane.add(scrollPane);
 		
 		table = new JTable();
@@ -229,11 +233,18 @@ public class Mesa extends JFrame {
 		textField.setColumns(10);
 		
 		scrollPane_1 = new JScrollPane();
-		scrollPane_1.setBounds(10, 95, 337, 518);
+		scrollPane_1.setBounds(10, 95, 208, 518);
 		contentPane.add(scrollPane_1);
 		
 		table_1 = new JTable();
 		scrollPane_1.setViewportView(table_1);
+		
+		scrollPane_2 = new JScrollPane();
+		scrollPane_2.setBounds(228, 95, 208, 518);
+		contentPane.add(scrollPane_2);
+		
+		table_2 = new JTable();
+		scrollPane_2.setViewportView(table_2);
 		
 		iniciarTodo();
 		
@@ -243,29 +254,23 @@ public class Mesa extends JFrame {
 	public void iniciarTodo() {		
 		centrar();
 		setearApariencia();
-		iniciarBotonesArticulos();
+		iniciarBotonesCategorias();
 	}
 	
-	public void iniciarBotonesArticulos() {
+	public void iniciarBotonesCategorias() {
 		
 		ArrayList<JButton> buttonList = new ArrayList<>();
 		
 		con.conectar();
-		ArrayList<Articulo> articulos = con.getArticulos();
+		ArrayList<Categoria> categorias = con.getCategorias();
 		con.cerrarConexion();
 		
-		
-		for (int i = 0; i < articulos.size(); i++) {
+		for (int i = 0; i < categorias.size(); i++) {
 		    final int index = i;
-		    final String descripcion = articulos.get(index).getDescripcion();
-		    final String precio = "$500";
-		    buttonList.add(createButton("<html><center>"+descripcion+"<br>"+precio+"<html><center>", e -> metodoEspecifico(articulos.get(index).getDescripcion())));            
+		    final String descripcion = categorias.get(index).getDescripcion();
+		    buttonList.add(createButton("<html><center>"+descripcion, e -> iniciarArticulos(categorias.get(index).getDescripcion())));            
 		}
 		
-        //buttonList.add(createButton("Bebidas", e -> metodoEspecifico(2)));
-        //buttonList.add(createButton("Postres", e -> metodoEspecifico(3)));
-        //buttonList.add(createButton("Cafeteria", e -> metodoEspecifico(3)));
-
         for (JButton button : buttonList) {
         	scrollPane_1.add(button);
         }
@@ -273,46 +278,98 @@ public class Mesa extends JFrame {
 		MyTableModel model = new MyTableModel(buttonList);
         
         table_1.setModel(model);
-        
-        // Crear la lista de objetos
-        
-        
+       
         ButtonRenderer buttonRenderer = new ButtonRenderer();
         buttonRenderer.setFont(new Font("Arial", Font.BOLD, 18));
         table_1.setDefaultRenderer(Object.class, buttonRenderer);
 
-        // Personalizar el editor de las celdas para permitir la interacción con los botones
-        table_1.setDefaultEditor(Object.class, new ButtonEditor());
-        
-        table_1.setRowHeight(100);
+        table_1.setDefaultEditor(Object.class, new ButtonEditor());        
+        table_1.setRowHeight(90);
         
         
 	}
 	
-	
-	// Método para crear un botón con un texto y acción específicos
 	private static JButton createButton(String text, ActionListener actionListener) {
+		// Mï¿½todo para crear un botï¿½n con un texto y acciï¿½n especï¿½ficos
         JButton button = new JButton(text);
         button.addActionListener(actionListener);
         return button;
     }
-    
-	
-    // Interfaz funcional genérica para representar ActionListener
+        
     @FunctionalInterface
     private interface MyActionListener extends ActionListener {
+    	// Interfaz funcional genï¿½rica para representar ActionListener
         @Override
         void actionPerformed(ActionEvent e);
     }
 	
-	
- // Método específico para cada botón
-    private static void metodoEspecifico(String nombreBoton) {
-        System.out.println("Botón " + nombreBoton + " presionado.");
+    private static void iniciarArticulos(String categoria) {
+    	
+    	con.conectar();
+    	ArrayList<Articulo> articulos = con.getArticulos(categoria);
+    	con.cerrarConexion();
+    	
+    	ArrayList<JButton> buttonList = new ArrayList<>();
+    	
+    	for (int i = 0; i < articulos.size(); i++) {
+		    final int index = i;
+		    final String descripcion = articulos.get(index).getDescripcion();
+		    final String precio = String.valueOf(articulos.get(index).getPrecio());
+		    buttonList.add(createButton("<html><center>"+descripcion+"<br>"+precio+"<html><center>", e -> sumarArticulo(articulos.get(index).getCodigo())));            
+		}
+    	
+    	for (JButton button : buttonList) {
+        	scrollPane_2.add(button);
+        }
+    	
+    	MyTableModel model = new MyTableModel(buttonList);
+        table_2.setModel(model);
+       
+        
+        ButtonRenderer buttonRenderer = new ButtonRenderer();
+        buttonRenderer.setFont(new Font("Arial", Font.BOLD, 18));
+        table_2.setDefaultRenderer(Object.class, buttonRenderer);
+
+        table_2.setDefaultEditor(Object.class, new ButtonEditor());        
+        table_2.setRowHeight(90);
+        
+    	
     }
-	
-	// Clase de modelo de datos personalizado
+    
+    public static void sumarArticulo(String codigo){
+    	
+    	con.conectar();
+    	ArrayList<ArticuloMesa> articulosMesas = con.getArticulosMesa();
+    	con.cerrarConexion();
+    	
+    	boolean existe =false;
+    	
+    	for(int i = 0; i<articulosMesas.size();i++) {
+    		ArticuloMesa a = articulosMesas.get(i);    		
+    		existe = existe || a.getArticulo_codigo().equals(codigo);
+    	}
+    	
+    	ArticuloMesa a = new ArticuloMesa();
+    	a.setMesa_numero(numeroMesa);
+    	a.setArticulo_codigo(codigo);
+    	
+    	con.conectar();
+    	a.setArticulo_descripcion(con.getArticulo(codigo).getDescripcion());
+    	con.cerrarConexion();
+    	
+    	double cantidad = 0;
+    	if(existe) {
+    		System.out.println("YA EXISTE");
+    		
+    	}
+    	
+    	
+    	
+    }
+    
+		
     static class MyTableModel extends AbstractTableModel {
+    	// Clase de modelo de datos personalizado
         private ArrayList<JButton> buttonList;
         private String[] columnNames = {""};
 
@@ -347,12 +404,12 @@ public class Mesa extends JFrame {
 
         @Override
         public void setValueAt(Object value, int row, int col) {
-            // No es necesario implementar este método para botones
+            // No es necesario implementar este mï¿½todo para botones
         }
     }
 
-    // Clase de renderizado personalizado para mostrar los botones en las celdas
     static class ButtonRenderer extends DefaultTableCellRenderer {
+    	// Clase de renderizado personalizado para mostrar los botones en las celdas
         private Font font;
 
         public ButtonRenderer() {
@@ -378,8 +435,8 @@ public class Mesa extends JFrame {
         }
     }
 
-    // Clase de editor personalizado para permitir la interacción con los botones en las celdas
     static class ButtonEditor extends DefaultCellEditor {
+    	// Clase de editor personalizado para permitir la interacciï¿½n con los botones en las celdas
         private JButton button;
 
         public ButtonEditor() {
