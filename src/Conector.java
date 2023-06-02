@@ -449,6 +449,29 @@ public class Conector {
         return categorias;
 	}
 	
+	public void guardarMesa(int numeroMesa, ArticuloMesa m) {
+		try {
+			PreparedStatement st = conexion.prepareStatement("insert into ARTICULOS_MESA(mesa_numero,hora,articulo_codigo,articulo_descripcion,cantidad,precio,total,observacion,item_numero) values (?,?,?,?,?,?,?,?,?)");
+			
+            
+            st.setInt(1,m.getMesa_numero());
+            st.setString(2,m.getHora());
+            st.setString(3,m.getArticulo_codigo());
+            st.setString(4,m.getArticulo_descripcion());
+            st.setDouble(5,m.getCantidad());
+            st.setDouble(6,m.getPrecio());
+            st.setDouble(7,m.getTotal());
+            st.setString(8,m.getObservacion());
+            st.setInt(9,m.getItem_numero());
+            
+            st.execute();
+            
+		} catch (SQLException e) {
+			System.out.println(e);
+		}
+	}
+	
+	
 	
 	public ArrayList<Pago> getPagos(){
 		ArrayList<Pago> pagos= new ArrayList<Pago>();
@@ -590,7 +613,7 @@ public class Conector {
 		ResultSet result = null;
 		Articulo p = null;
 		try {			
-			PreparedStatement st = conexion.prepareStatement("select * from ARTICULOS where articulo = '"+Articulo+"'");
+			PreparedStatement st = conexion.prepareStatement("select * from ARTICULOS where codigo = '"+Articulo+"'");
 			result = st.executeQuery();			
 			
             p = new Articulo();
@@ -649,6 +672,50 @@ public class Conector {
                 a.setCantidad(cantidad);
                 a.setPrecio(precio);
                 a.setTotal(item_numero);
+                a.setObservacion(observacion);
+                a.setItem_numero(item_numero);
+                
+                
+                articulosMesa.add(a);
+            	}
+            	
+        }catch (SQLException e) {
+        	System.out.println(e);
+            }
+       
+        return articulosMesa;
+		
+		
+	}
+	
+	public ArrayList<ArticuloMesa> getArticulosMesa(int numeroMesa){
+		ArrayList<ArticuloMesa> articulosMesa = new ArrayList<ArticuloMesa>();
+		ResultSet result = null;
+		ArticuloMesa a = null;
+		try {
+    		
+            PreparedStatement st = conexion.prepareStatement("select * from ARTICULOS_MESA where mesa_numero ='"+numeroMesa+"'");
+            result = st.executeQuery();
+            
+            while (result.next()) {
+            	a = new ArticuloMesa();
+                int mesa_numero = result.getInt("mesa_numero");
+                String hora= result.getString("hora");
+                String articulo_codigo= result.getString("articulo_codigo");
+                String articulo_descripcion= result.getString("articulo_descripcion");
+                double cantidad= result.getDouble("cantidad");  
+                double precio = result.getDouble("precio");
+                double total= result.getDouble("total");
+                String observacion= result.getString("observacion");
+                int item_numero = result.getInt("item_numero");
+                
+                a.setMesa_numero(mesa_numero);
+                a.setArticulo_codigo(articulo_codigo);
+                a.setArticulo_descripcion(articulo_descripcion);
+                a.setHora(hora);
+                a.setCantidad(cantidad);
+                a.setPrecio(precio);
+                a.setTotal(total);
                 a.setObservacion(observacion);
                 a.setItem_numero(item_numero);
                 

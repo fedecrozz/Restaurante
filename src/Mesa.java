@@ -5,6 +5,8 @@ import java.awt.EventQueue;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 import javax.swing.JFrame;
@@ -33,7 +35,7 @@ import javax.swing.JTextField;
 public class Mesa extends JFrame {
 
 	private JPanel contentPane;
-	private JTable table;
+	private static JTable table;
 	private JTextField textField;
 	private static JScrollPane scrollPane_1;
 	private static JTable table_1;
@@ -41,7 +43,11 @@ public class Mesa extends JFrame {
 	private static JScrollPane scrollPane_2;
 	private static JTable table_2;
 	private static ArrayList<ArticuloMesa> articulosMesa= new ArrayList();
+	private static DefaultTableModel modeloArticulosMesa = new DefaultTableModel();
 	private static int numeroMesa=0;
+	private JScrollPane scrollPane;
+//	private static GUI gui = new GUI();
+	private static JLabel saldo_final;
 
 	/**
 	 * Launch the application.
@@ -50,7 +56,7 @@ public class Mesa extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Mesa frame = new Mesa();
+					Mesa frame = new Mesa(0);
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -61,8 +67,10 @@ public class Mesa extends JFrame {
 
 	/**
 	 * Create the frame.
+	 * @param NumeroMesa 
 	 */
-	public Mesa() {
+	public Mesa(int NumeroMesa) {
+		numeroMesa = NumeroMesa;
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 1280, 720);
@@ -73,7 +81,7 @@ public class Mesa extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		JScrollPane scrollPane = new JScrollPane();
+		scrollPane = new JScrollPane();
 		scrollPane.setBounds(446, 95, 731, 518);
 		contentPane.add(scrollPane);
 		
@@ -87,12 +95,12 @@ public class Mesa extends JFrame {
 		));
 		scrollPane.setViewportView(table);
 		
-		JLabel lblNewLabel_1 = new JLabel("$0.00");
-		lblNewLabel_1.setForeground(new Color(0, 255, 255));
-		lblNewLabel_1.setFont(new Font("Arial", Font.BOLD, 24));
-		lblNewLabel_1.setHorizontalAlignment(SwingConstants.RIGHT);
-		lblNewLabel_1.setBounds(1066, 639, 188, 31);
-		contentPane.add(lblNewLabel_1);
+		saldo_final = new JLabel("$0.00");
+		saldo_final.setForeground(new Color(0, 255, 255));
+		saldo_final.setFont(new Font("Arial", Font.BOLD, 24));
+		saldo_final.setHorizontalAlignment(SwingConstants.RIGHT);
+		saldo_final.setBounds(1066, 639, 188, 31);
+		contentPane.add(saldo_final);
 		
 		JLabel lblNewLabel_2 = new JLabel("Total:");
 		lblNewLabel_2.setForeground(Color.WHITE);
@@ -255,6 +263,7 @@ public class Mesa extends JFrame {
 		centrar();
 		setearApariencia();
 		iniciarBotonesCategorias();
+		iniciarArticulosMesa(numeroMesa);
 	}
 	
 	public void iniciarBotonesCategorias() {
@@ -280,11 +289,11 @@ public class Mesa extends JFrame {
         table_1.setModel(model);
        
         ButtonRenderer buttonRenderer = new ButtonRenderer();
-        buttonRenderer.setFont(new Font("Arial", Font.BOLD, 18));
+        buttonRenderer.setFont(new Font("Console", Font.BOLD, 15));
         table_1.setDefaultRenderer(Object.class, buttonRenderer);
 
         table_1.setDefaultEditor(Object.class, new ButtonEditor());        
-        table_1.setRowHeight(90);
+        table_1.setRowHeight(80);
         
         
 	}
@@ -327,7 +336,7 @@ public class Mesa extends JFrame {
        
         
         ButtonRenderer buttonRenderer = new ButtonRenderer();
-        buttonRenderer.setFont(new Font("Arial", Font.BOLD, 18));
+        buttonRenderer.setFont(new Font("Console", Font.BOLD, 15));
         table_2.setDefaultRenderer(Object.class, buttonRenderer);
 
         table_2.setDefaultEditor(Object.class, new ButtonEditor());        
@@ -339,34 +348,99 @@ public class Mesa extends JFrame {
     public static void sumarArticulo(String codigo){
     	
     	con.conectar();
-    	ArrayList<ArticuloMesa> articulosMesas = con.getArticulosMesa();
+    	ArrayList<ArticuloMesa> articulosMesas = con.getArticulosMesa(numeroMesa);
     	con.cerrarConexion();
     	
     	boolean existe =false;
+    	int indice = 0;
     	
     	for(int i = 0; i<articulosMesas.size();i++) {
     		ArticuloMesa a = articulosMesas.get(i);    		
     		existe = existe || a.getArticulo_codigo().equals(codigo);
+    		if(existe) {
+    			indice = i;
+    		}
     	}
     	
     	ArticuloMesa a = new ArticuloMesa();
     	a.setMesa_numero(numeroMesa);
     	a.setArticulo_codigo(codigo);
     	
+    	a.setHora(getHora());
+    	
     	con.conectar();
     	a.setArticulo_descripcion(con.getArticulo(codigo).getDescripcion());
     	con.cerrarConexion();
     	
     	double cantidad = 0;
+    	
     	if(existe) {
     		System.out.println("YA EXISTE");
-    		
+    		cantidad = articulosMesas.get(indice).getCantidad();
+    		cantidad+=1;
+    		a.setCantidad(cantidad);
+    	}else {
+    		cantidad=1;
+    		a.setCantidad(1);
     	}
     	
+    	con.conectar();
+    	a.setPrecio(con.getArticulo(codigo).getPrecio());
+    	con.cerrarConexion();
     	
+    	con.conectar();
+    	a.setTotal(con.getArticulo(codigo).getPrecio()*cantidad);
+    	con.cerrarConexion();
+    	
+    	con.conectar();
+    	con.guardarMesa(numeroMesa,a);
+    	con.cerrarConexion();
+    	
+    	iniciarArticulosMesa(numeroMesa);    	
     	
     }
     
+    public static void iniciarArticulosMesa(int numeroMesa) {
+    	modeloArticulosMesa = new DefaultTableModel();
+    	//table.setDefaultRenderer(Object.class,gui);
+    	
+    	
+    	con.conectar();
+    	ArrayList<ArticuloMesa> articulos = con.getArticulosMesa(numeroMesa);
+    	con.cerrarConexion();
+    	
+    	
+    	modeloArticulosMesa.addColumn("Hora");
+    	modeloArticulosMesa.addColumn("Articulo");
+    	modeloArticulosMesa.addColumn("Descripcion");
+    	modeloArticulosMesa.addColumn("Cant");
+    	modeloArticulosMesa.addColumn("Precio");
+		modeloArticulosMesa.addColumn("Total");
+		modeloArticulosMesa.addColumn("Observacion");
+    	
+		double saldo = 0;
+		
+		for(int i = 0 ; i< articulos.size();i++) {
+			ArticuloMesa a = articulos.get(i);
+			saldo=saldo + a.getTotal();
+			actualizarSaldo(saldo);
+			modeloArticulosMesa.addRow(new Object[] {a.getHora(),a.getArticulo_codigo(),a.getArticulo_descripcion(),a.getCantidad(),"$"+a.getPrecio(),a.getTotal(),a.getObservacion()});
+			
+		}
+		actualizarSaldo(saldo);
+		table.setModel(modeloArticulosMesa);
+		//table.setDefaultRenderer(Object.class,gui);
+		
+    }
+    
+    public static void actualizarSaldo(double saldo) {
+    	saldo_final.setText(String.valueOf(saldo));
+    }
+    
+    public static String getHora() {
+		DateTimeFormatter formateador = DateTimeFormatter.ofPattern("HH:mm:ss");
+		return formateador.format(LocalDateTime.now());
+	}
 		
     static class MyTableModel extends AbstractTableModel {
     	// Clase de modelo de datos personalizado
