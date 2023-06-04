@@ -8,6 +8,8 @@ import javax.swing.border.EmptyBorder;
 
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.awt.event.ActionEvent;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -25,15 +27,14 @@ import javax.swing.DefaultComboBoxModel;
 public class ArticuloNuevo extends JFrame {
 
 	private JPanel contentPane;
-	private JTextField articulo;
+	private JTextField codigo;
 	private JTextField descripcion;
 	private JTextField precio_venta;
 	private JTextField precio_costo;
 	private JTextField stock;
 	private Conector con = new Conector();
 	private Articulos a;
-	private JComboBox grupo;
-	private JTextField textField;
+	private JComboBox categoria;
 
 	/**
 	 * Launch the application.
@@ -59,7 +60,7 @@ public class ArticuloNuevo extends JFrame {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setResizable(false);
 		setTitle("Articulo Nuevo");
-		setBounds(100, 100, 373, 491);
+		setBounds(100, 100, 373, 432);
 		contentPane = new JPanel();
 		contentPane.setBackground(Color.DARK_GRAY);
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -75,75 +76,75 @@ public class ArticuloNuevo extends JFrame {
 		JLabel lblArticulo = new JLabel("Codigo");
 		lblArticulo.setForeground(Color.WHITE);
 		lblArticulo.setFont(new Font("Segoe UI Semibold", Font.BOLD, 13));
-		lblArticulo.setBounds(60, 11, 237, 26);
+		lblArticulo.setBounds(60, 5, 237, 26);
 		contentPane.add(lblArticulo);
 		
-		articulo = new JTextField();
-		articulo.setColumns(10);
-		articulo.setBounds(60, 35, 237, 20);
-		contentPane.add(articulo);
+		codigo = new JTextField();
+		codigo.setColumns(10);
+		codigo.setBounds(60, 36, 237, 20);
+		contentPane.add(codigo);
 		
 		descripcion = new JTextField();
 		descripcion.setColumns(10);
-		descripcion.setBounds(60, 90, 237, 20);
+		descripcion.setBounds(60, 92, 237, 20);
 		contentPane.add(descripcion);
 		
 		JLabel lblDescripcion = new JLabel("Descripcion");
 		lblDescripcion.setForeground(Color.WHITE);
 		lblDescripcion.setFont(new Font("Segoe UI Semibold", Font.BOLD, 13));
-		lblDescripcion.setBounds(60, 66, 237, 26);
+		lblDescripcion.setBounds(60, 61, 237, 26);
 		contentPane.add(lblDescripcion);
 		
 		precio_venta = new JTextField();
 		precio_venta.setText("0");
 		precio_venta.setColumns(10);
-		precio_venta.setBounds(60, 145, 237, 20);
+		precio_venta.setBounds(60, 148, 237, 20);
 		contentPane.add(precio_venta);
 		
 		JLabel lblPrecioDeVenta = new JLabel("Precio de Venta");
 		lblPrecioDeVenta.setForeground(Color.WHITE);
 		lblPrecioDeVenta.setFont(new Font("Segoe UI Semibold", Font.BOLD, 13));
-		lblPrecioDeVenta.setBounds(60, 121, 237, 26);
+		lblPrecioDeVenta.setBounds(60, 117, 237, 26);
 		contentPane.add(lblPrecioDeVenta);
 		
 		precio_costo = new JTextField();
 		precio_costo.setText("0");
 		precio_costo.setColumns(10);
-		precio_costo.setBounds(60, 255, 237, 20);
+		precio_costo.setBounds(60, 204, 237, 20);
 		contentPane.add(precio_costo);
 		
 		JLabel lblPrecioDeCosto = new JLabel("Precio de Costo");
 		lblPrecioDeCosto.setForeground(Color.WHITE);
 		lblPrecioDeCosto.setFont(new Font("Segoe UI Semibold", Font.BOLD, 13));
-		lblPrecioDeCosto.setBounds(60, 231, 237, 26);
+		lblPrecioDeCosto.setBounds(60, 173, 237, 26);
 		contentPane.add(lblPrecioDeCosto);
 		
 		JLabel lblGrupoDeArticulo = new JLabel("Categoria");
 		lblGrupoDeArticulo.setForeground(Color.WHITE);
 		lblGrupoDeArticulo.setFont(new Font("Segoe UI Semibold", Font.BOLD, 13));
-		lblGrupoDeArticulo.setBounds(60, 286, 237, 26);
+		lblGrupoDeArticulo.setBounds(60, 229, 237, 26);
 		contentPane.add(lblGrupoDeArticulo);
 		
 		stock = new JTextField();
 		stock.setText("0");
 		stock.setColumns(10);
-		stock.setBounds(60, 367, 237, 20);
+		stock.setBounds(60, 316, 237, 20);
 		contentPane.add(stock);
 		
 		JLabel lblStock = new JLabel("Stock");
 		lblStock.setForeground(Color.WHITE);
 		lblStock.setFont(new Font("Segoe UI Semibold", Font.BOLD, 13));
-		lblStock.setBounds(60, 343, 237, 26);
+		lblStock.setBounds(60, 285, 237, 26);
 		contentPane.add(lblStock);
 		
-		grupo = new JComboBox();
-		grupo.setBounds(60, 312, 237, 20);
-		contentPane.add(grupo);
+		categoria = new JComboBox();
+		categoria.setBounds(60, 260, 237, 20);
+		contentPane.add(categoria);
 		
 		
-		Icon icon = new ImageIcon(Principal.class.getResource("diskette.png"));
+		//Icon icon = new ImageIcon(Principal.class.getResource("diskette.png"));
 	
-		JButton btnNewButton = new JButton(icon);
+		JButton btnNewButton = new JButton();
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				guardarArticulo();
@@ -151,20 +152,10 @@ public class ArticuloNuevo extends JFrame {
 		});
 		btnNewButton.setText("Guardar Articulo");
 		btnNewButton.setFont(new Font("Segoe UI Semibold", Font.BOLD, 14));
-		btnNewButton.setBounds(60, 398, 237, 41);
+		btnNewButton.setBounds(60, 341, 237, 41);
 		contentPane.add(btnNewButton);
 		
-		textField = new JTextField();
-		textField.setText("0");
-		textField.setColumns(10);
-		textField.setBounds(60, 200, 237, 20);
-		contentPane.add(textField);
-		
-		JLabel lblPrecioDeVenta_1 = new JLabel("Precio de Venta");
-		lblPrecioDeVenta_1.setForeground(Color.WHITE);
-		lblPrecioDeVenta_1.setFont(new Font("Segoe UI Semibold", Font.BOLD, 13));
-		lblPrecioDeVenta_1.setBounds(60, 176, 237, 26);
-		contentPane.add(lblPrecioDeVenta_1);
+		iniciarTodo();
 	}
 	
 	public void centrarPantalla() {
@@ -172,22 +163,37 @@ public class ArticuloNuevo extends JFrame {
 		Dimension size = toolkit.getScreenSize();
 		setLocation(size.width/2 - getWidth()/2, size.height/2 - getHeight()/2);
 	}
+	
+	public void iniciarTodo() {
+		centrarPantalla();
+		iniciarCategorias();
+		iniciarCodigo();
+	}
 
+	public void iniciarCodigo() {
+		con.conectar();
+		String ultimo = con.getCodigoUltimoArticulo();
+		con.cerrarConexion();
+		
+		
+		codigo.setText(String.valueOf(Integer.valueOf(ultimo)+1));
+	}
+	
 	public void guardarArticulo() {
-		String Articulo = articulo.getText().toUpperCase();		
+		String Articulo = codigo.getText().toUpperCase();		
 		String Descripcion = descripcion.getText();		
-		String Grupo= grupo.getSelectedItem().toString();
+		String Grupo= categoria.getSelectedItem().toString();
 		
 		con.conectar();
 		boolean existe = con.existeArticulo(Articulo);
 		con.cerrarConexion();
 		
 		
-		if(articulo.getText().isEmpty()) {
-			JOptionPane.showMessageDialog(null, "Ingrese el articulo");
+		if(codigo.getText().isEmpty()) {
+			JOptionPane.showMessageDialog(null, "Ingrese el codigo");
 		}else {
 			if(existe) {
-				JOptionPane.showMessageDialog(null, "Ya existe un articulo con ese nombre");
+				JOptionPane.showMessageDialog(null, "Ya existe un articulo con ese codigo");
 			}else {				
 				if(!precio_venta.getText().matches("^\\d{1,3}(,?\\d{3})*(\\.\\d{1,2})?$")) {
 					JOptionPane.showMessageDialog(null, "Ingrese un precio de venta valido");
@@ -203,19 +209,19 @@ public class ArticuloNuevo extends JFrame {
 							double Precio_costo= Double.valueOf(precio_costo.getText());
 							double Stock= Double.valueOf(stock.getText());
 							
-							c.setArticulo(Articulo);
+							c.setCodigo(Articulo);
 							c.setDescripcion(Descripcion);
-							c.setPrecio_venta(Precio_venta);
-							c.setPrecio_costo(Precio_costo);
+							c.setCategoria(Grupo);
+							c.setCosto(Precio_costo);
 							c.setStock(Stock);
-							c.setGrupo(Grupo);
+							c.setPrecio(Precio_venta);
 							
 							con.conectar();
 							con.guardarArticulo(c);
 							con.cerrarConexion();
 							
 							JOptionPane.showMessageDialog(null, "Se guardó exitosamente el articulo "+Articulo);
-							articulo.setText("");
+							codigo.setText("");
 							descripcion.setText("");
 							precio_venta.setText("");
 							precio_costo.setText("");
@@ -231,4 +237,23 @@ public class ArticuloNuevo extends JFrame {
 			
 		}
 	}
+
+	public void iniciarCategorias() {
+		con.conectar();
+		ArrayList<Categoria> categorias = con.getCategorias();
+		con.cerrarConexion();
+		
+		DefaultComboBoxModel<String> combo = new DefaultComboBoxModel<>();
+		combo.removeAllElements();
+		
+		
+		
+		for(int i = 0; i < categorias.size(); i++) {
+			combo.addElement(categorias.get(i).getDescripcion());
+		}
+		categoria.setModel(combo);
+		
+		
+	}
+
 }

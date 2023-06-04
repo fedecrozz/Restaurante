@@ -1,25 +1,41 @@
-
-
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.print.PageFormat;
+import java.awt.print.Paper;
+import java.awt.print.Printable;
+import java.awt.print.PrinterException;
+import java.awt.print.PrinterJob;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.EmptyBorder;
+import javax.print.PrintException;
+import javax.print.PrintService;
+import javax.print.PrintServiceLookup;
+import javax.print.attribute.HashPrintRequestAttributeSet;
+import javax.print.attribute.PrintRequestAttributeSet;
+import javax.print.attribute.standard.MediaPrintableArea;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
 import javax.swing.JScrollPane;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import java.awt.Font;
+import java.awt.Graphics;
+
 import javax.swing.border.TitledBorder;
 import java.awt.Color;
 import java.awt.Component;
@@ -27,8 +43,11 @@ import java.awt.Component;
 import javax.swing.table.DefaultTableCellRenderer;
 
 import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableModel;
+
+
 import java.awt.SystemColor;
 import javax.swing.JTextField;
 
@@ -191,6 +210,14 @@ public class Mesa extends JFrame {
 		panel_2.add(btnCancelar);
 		
 		JButton btnNewButton = new JButton("Confirmar pedido");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				imprimirTicket();
+				
+				
+			}
+		});
 		btnNewButton.setBounds(1094, 7, 140, 41);
 		panel_2.add(btnNewButton);
 		
@@ -437,11 +464,183 @@ public class Mesa extends JFrame {
     	saldo_final.setText(String.valueOf(saldo));
     }
     
+    public static void imprimir() throws PrintException {
+        PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null);
+
+        if (services.length > 0) {
+            // Obtener la impresora por defecto (puedes seleccionar una impresora específica si lo deseas)
+            PrintService printService = services[0];
+            PrinterJob printerJob = PrinterJob.getPrinterJob();
+            
+            try {
+				printerJob.setPrintService(printService);
+			} catch (PrinterException e) {
+				e.printStackTrace();
+			}
+
+            Printable printable = new Printable() {
+                @Override
+                public int print(Graphics graphics, PageFormat pageFormat, int pageIndex) throws PrinterException {
+                    if (pageIndex != 0) {
+                        return NO_SUCH_PAGE;
+                    }
+
+                    // Configurar los estilos de fuente y tamaño
+                    Font font = new Font("Courier New", Font.PLAIN, 10);
+                    graphics.setFont(font);
+
+                    // Establecer la posición inicial del contenido del ticket
+                    int x = 10;
+                    int y = 10;
+
+                    // Imprimir los detalles de los artículos
+                    for (int i = 0; i < articulosMesa.size(); i++) {
+                        ArticuloMesa a= articulosMesa.get(i);
+                        String linea = String.format("%-20s %6.2f %4d", a.getArticulo_descripcion(),"x", a.getCantidad(), a.getTotal());
+                        graphics.drawString(linea, x, y + i * 15);
+                    }
+
+                    // Imprimir el total de la operación
+                    graphics.drawString("-------------------------------", x, y + articulosMesa.size() * 15);
+                    graphics.drawString(String.format("Total: %.2f", totalMesa(numeroMesa)), x, y + (articulosMesa.size() + 1) * 15);
+
+                    return PAGE_EXISTS;
+                }
+            };
+
+            // Asignar el objeto Printable al PrinterJob
+            printerJob.setPrintable(printable);
+
+            // Mostrar el diálogo de impresión y enviar el trabajo de impresión
+            if (printerJob.printDialog()) {
+                try {
+					printerJob.print();
+				} catch (PrinterException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+            }
+        }
+    }
+    
+    public static double totalMesa(int numeroMesa) {
+    	double total = 0;
+    	
+    	con.conectar();
+    	total = con.getTotalMesa(numeroMesa);
+    	con.cerrarConexion();
+    	
+    	return total;
+    }
+    
+    public void imprimirTicket() {
+    	JTextArea ticket = new javax.swing.JTextArea();
+    	String mesero = "Rodrigo";
+    	
+    	try {
+    		ticket.setFont(new Font("Arial",Font.PLAIN,7));
+    		ticket.setText("             Parrilla el Pa \n");
+    		ticket.setText(ticket.getText() + "----------------------------------------------------------------\n");
+    		ticket.setText(ticket.getText() + "Fecha: "+getFecha()+" "+getHora()+"\n");
+    		ticket.setText(ticket.getText() + "Mesa: "+numeroMesa+"\n");
+    		ticket.setText(ticket.getText() + "Mesero: "+mesero+"\n");
+            ticket.setText(ticket.getText() + "----------------------------------------------------------------\n");
+            
+            con.conectar();
+            ArrayList<ArticuloMesa> articulos = con.getArticulosMesa(0);
+            con.cerrarConexion();
+            
+            ticket.setText(ticket.getText() + "Cant.\t Descripcion\n");
+            ticket.setText(ticket.getText() + "----------------------------------------------------------------\n");
+            for (int i = 0; i < articulos.size(); i++) {
+                ArticuloMesa a = articulos.get(i);
+            	
+                String nombre = a.getArticulo_descripcion();
+                String cant = String.valueOf(a.getCantidad());
+                String precio = String.valueOf(a.getPrecio());
+                String total = String.valueOf(a.getTotal());
+                
+                ticket.setText(ticket.getText() +quitarDecimal(cant)+"\t"+ nombre+"\t"+"\n");
+                ticket.setText(ticket.getText() +"$"+quitarDecimal(total)+" \n");
+            }
+            ticket.setText(ticket.getText() + "----------------------------------------------------------------\n");
+            con.conectar();
+            double total = con.getTotalMesa(0);
+            con.cerrarConexion();
+            
+            ticket.setText(ticket.getText() + "Total : $"+formatearDouble(total)+"\n");
+            ticket.setText(ticket.getText() + "====================================\n");
+            ticket.setText(ticket.getText() + "Muchas gracias por elegirnos! "+"\n");
+            
+            imprimirTextArea(ticket);
+            //ticket.print();
+            
+        //} catch (PrinterException ex) {
+        } catch (Exception ex) {
+        	System.out.println("Error al imprimir "+ex);
+        	
+		}
+        
+    }
+    
+    public static void imprimirTextArea(JTextArea textArea) {
+    	PrinterJob printerJob = PrinterJob.getPrinterJob();
+
+        // Crear un objeto PageFormat con los márgenes personalizados
+        PageFormat pageFormat = printerJob.defaultPage();
+        Paper paper = pageFormat.getPaper();
+        double margin = 10; // Tamaño de los márgenes en puntos
+        paper.setImageableArea(margin, margin, paper.getWidth() - margin * 2, paper.getHeight() - margin * 2);
+        pageFormat.setPaper(paper);
+
+        // Crear un Printable personalizado para imprimir el JTextArea
+        Printable printable = textArea.getPrintable(null, null);
+
+        try {
+            // Establecer el Printable y PageFormat en el PrinterJob
+            printerJob.setPrintable(printable, pageFormat);
+
+            // Mostrar el cuadro de diálogo de impresión
+            if (printerJob.printDialog()) {
+                // Imprimir el JTextArea con los márgenes personalizados
+                printerJob.print();
+            }
+        } catch (PrinterException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    
+    public static String formatearDouble(double valor) {
+        DecimalFormatSymbols simbolos = new DecimalFormatSymbols();
+        simbolos.setDecimalSeparator(',');
+        simbolos.setGroupingSeparator('.');
+
+        DecimalFormat formato = new DecimalFormat("#,##0.00", simbolos);
+
+        return formato.format(valor);
+    }
+    
+    public String quitarDecimal(String valor) {
+        if (valor.endsWith(".0")) {
+            return valor.substring(0, valor.length() - 2);
+        } else {
+            return valor;
+        }
+    }
+
     public static String getHora() {
 		DateTimeFormatter formateador = DateTimeFormatter.ofPattern("HH:mm:ss");
 		return formateador.format(LocalDateTime.now());
 	}
 		
+    public String getFecha() {
+		LocalDate fechaHoy = LocalDate.now();
+		DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yy");
+		String fechaFinal=fechaHoy.format(formato).toString();
+		return fechaFinal;	
+	}
+    
     static class MyTableModel extends AbstractTableModel {
     	// Clase de modelo de datos personalizado
         private ArrayList<JButton> buttonList;

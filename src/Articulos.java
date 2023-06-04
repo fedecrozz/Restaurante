@@ -14,14 +14,18 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JSeparator;
 import java.awt.event.ActionListener;
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.awt.event.ActionEvent;
+import java.awt.Font;
 
 public class Articulos extends JFrame {
 
 	private JPanel contentPane;
-	private JTable table;
-	private JTextField textField;
+	private JTable tabla_articulos;
+	private JTextField txtBuscarArticulo;
 	private Conector con = new Conector();
+	private DefaultTableModel modelo_articulos = new DefaultTableModel();
 
 	/**
 	 * Launch the application.
@@ -97,17 +101,18 @@ public class Articulos extends JFrame {
 		contentPane.add(panel);
 		panel.setLayout(null);
 		
-		textField = new JTextField();
-		textField.setBounds(10, 10, 1224, 47);
-		panel.add(textField);
-		textField.setColumns(10);
+		txtBuscarArticulo = new JTextField();
+		txtBuscarArticulo.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		txtBuscarArticulo.setBounds(10, 10, 1224, 47);
+		panel.add(txtBuscarArticulo);
+		txtBuscarArticulo.setColumns(10);
 		
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBounds(10, 90, 1244, 479);
 		contentPane.add(scrollPane);
 		
-		table = new JTable();
-		table.setModel(new DefaultTableModel(
+		tabla_articulos = new JTable();
+		tabla_articulos.setModel(new DefaultTableModel(
 			new Object[][] {
 				{null, null, null, null, null, null, null, null, null},
 			},
@@ -115,7 +120,7 @@ public class Articulos extends JFrame {
 				"Codigo", "Descripcion", "Categoria", "Precio", "Precio 2", "Costo", "Ganancia", "Stock", "Observacion"
 			}
 		));
-		scrollPane.setViewportView(table);
+		scrollPane.setViewportView(tabla_articulos);
 		
 		JPanel panel_1 = new JPanel();
 		panel_1.setBounds(10, 580, 1244, 68);
@@ -138,11 +143,53 @@ public class Articulos extends JFrame {
 		JButton btnEliminarArticulo = new JButton("Eliminar Articulo");
 		btnEliminarArticulo.setBounds(877, 11, 218, 46);
 		panel_1.add(btnEliminarArticulo);
+		
+		iniciarTodo();
+	}
+	
+	
+	public void iniciarTodo() {
+		iniciarArticulos();
 	}
 	
 	public void articuloNuevo() {
 		ArticuloNuevo a = new ArticuloNuevo(this,con);
 		a.setVisible(true);
 	}
+	
+	public String quitarDecimal(String valor) {
+        if (valor.endsWith(".0")) {
+            return valor.substring(0, valor.length() - 2);
+        } else {
+            return valor;
+        }
+    }
+	
+	
+	
+	public void iniciarArticulos() {
+		modelo_articulos = new DefaultTableModel();		
+		String articulo = txtBuscarArticulo.getText();
+		
+		con.conectar();
+		ArrayList<Articulo> articulos = con.getArticulosBusqueda(articulo);
+		con.cerrarConexion();
+		
+		modelo_articulos.addColumn("Codigo");
+		modelo_articulos.addColumn("Descripcion");
+		modelo_articulos.addColumn("Categoria");
+		modelo_articulos.addColumn("Precio");
+		modelo_articulos.addColumn("Costo");
+		modelo_articulos.addColumn("Stock");
+		modelo_articulos.addColumn("Observacion");
+		
+		
+		for(int i = 0 ; i< articulos.size();i++) {
+			Articulo m = articulos.get(i);
+			modelo_articulos.addRow(new Object[] {m.getCodigo(),m.getDescripcion(),m.getCategoria(),"$"+quitarDecimal(String.valueOf(m.getPrecio())),"$"+quitarDecimal(String.valueOf(m.getCosto())),quitarDecimal(String.valueOf(m.getStock())),m.getObservacion()});
+			}
+		tabla_articulos.setModel(modelo_articulos);
+	}
+	
 	
 }

@@ -18,5 +18,9 @@
 	<classpathentry kind="lib" path="lib/poi-scratchpad-3.16.jar"/>
 	<classpathentry kind="lib" path="lib/sqlite-jdbc-3.27.2.1 (2021_09_28 17_42_48 UTC).jar"/>
 	<classpathentry kind="lib" path="lib/xmlbeans-2.6.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Federico/git/Restaurante/lib/jpos.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Federico/git/Restaurante/lib/ConectorPluginV3-1.0-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Federico/git/Restaurante/lib/escpos.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Federico/git/Restaurante/lib/jackson-jr-all-2.7.5.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

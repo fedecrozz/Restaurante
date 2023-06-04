@@ -135,6 +135,25 @@ public class Conector {
 		return ret;
 	}
 	
+	public String getCodigoUltimoArticulo() {
+		
+		
+		ResultSet result = null;
+		String codigo = "";
+		
+		
+		try {			
+			PreparedStatement st = conexion.prepareStatement("select * from ARTICULOS order by codigo DESC limit 1");
+			result = st.executeQuery();			
+			
+            codigo= result.getString("codigo");
+            
+		} catch (SQLException ex) {
+			System.out.println(ex);
+		}
+		return codigo;
+	}
+	
 	public void guardarArticulo(Articulo c) {
 		try {
 			PreparedStatement st = conexion.prepareStatement("insert into ARTICULOS(articulo,descripcion,precio_venta,precio_costo,grupo,stock) values (?,?,?,?,?,?)");
@@ -386,31 +405,34 @@ public class Conector {
         return articulos;
 	}
 	
-	public ArrayList<Articulo> getArticuloss(String Articulo){
+	public ArrayList<Articulo> getArticulosBusqueda(String Articulo){
 		ArrayList<Articulo> articulos= new ArrayList<Articulo>();
 		ResultSet result = null;
 		
         try {
         		
-            PreparedStatement st = conexion.prepareStatement("select * from ARTICULOS where articulo LIKE '%"+Articulo+"%' order by articulo ASC");
+            PreparedStatement st = conexion.prepareStatement("select * from ARTICULOS where codigo LIKE '%"+Articulo+"%' order by codigo ASC");
             result = st.executeQuery();
             
             while (result.next()) {
             	Articulo p = new Articulo();
-                String articulo= result.getString("articulo");
+                String codigo= result.getString("codigo");
                 String descripcion= result.getString("descripcion");
-                double precio_venta= result.getDouble("precio_venta");
-                double precio_costo= result.getDouble("precio_costo");
-                String grupo= result.getString("grupo");
+                String categoria= result.getString("categoria");
+                double precio= result.getDouble("precio");
+                double precio2= result.getDouble("precio2");
+                double costo= result.getDouble("costo");
+                String observacion= result.getString("observacion");
                 double stock= result.getDouble("stock");
                 
-                p.setArticulo(articulo);
+                p.setCodigo(codigo);
+                p.setCategoria(categoria);                
                 p.setDescripcion(descripcion);
-                p.setPrecio_venta(precio_venta);
-                p.setPrecio_costo(precio_costo);
-                p.setGrupo(grupo);
+                p.setPrecio(precio);
+                p.setPrecio2(precio2);
+                p.setCosto(costo);
                 p.setStock(stock);
-                
+                p.setObservacion(observacion);
                 articulos.add(p);
                 
             	}
@@ -1244,6 +1266,25 @@ public class Conector {
 		} catch (SQLException e) {
 			System.out.println(e);
 		}
+	}
+
+	
+	
+	public double getTotalMesa(int numeroMesa) {
+
+		double total = 0;
+		
+		ResultSet result = null;
+		
+		try {
+            PreparedStatement st = conexion.prepareStatement("SELECT sum(total) FROM ARTICULOS_MESA where mesa_numero ='"+numeroMesa+"'");
+            result = st.executeQuery();
+            total =result.getInt("sum(total)");            
+        }catch (SQLException e) {
+				System.out.println(e);
+		}
+		
+		return total;
 	}
 	
 }
