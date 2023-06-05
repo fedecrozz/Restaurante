@@ -372,7 +372,7 @@ public class Mesa extends JFrame {
     	
     }
     
-    public static void sumarArticulo(String codigo){
+    public static void sumarArticulo(int codigo){
     	
     	con.conectar();
     	ArrayList<ArticuloMesa> articulosMesas = con.getArticulosMesa(numeroMesa);
@@ -391,12 +391,12 @@ public class Mesa extends JFrame {
     	
     	ArticuloMesa a = new ArticuloMesa();
     	a.setMesa_numero(numeroMesa);
-    	a.setArticulo_codigo(codigo);
+    	a.setArticulo_codigo(""+codigo);
     	
     	a.setHora(getHora());
     	
     	con.conectar();
-    	a.setArticulo_descripcion(con.getArticulo(codigo).getDescripcion());
+    	a.setArticulo_descripcion(con.getArticulo(""+codigo).getDescripcion());
     	con.cerrarConexion();
     	
     	double cantidad = 0;
@@ -412,11 +412,11 @@ public class Mesa extends JFrame {
     	}
     	
     	con.conectar();
-    	a.setPrecio(con.getArticulo(codigo).getPrecio());
+    	a.setPrecio(con.getArticulo(""+codigo).getPrecio());
     	con.cerrarConexion();
     	
     	con.conectar();
-    	a.setTotal(con.getArticulo(codigo).getPrecio()*cantidad);
+    	a.setTotal(con.getArticulo(""+codigo).getPrecio()*cantidad);
     	con.cerrarConexion();
     	
     	con.conectar();
@@ -468,7 +468,7 @@ public class Mesa extends JFrame {
         PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null);
 
         if (services.length > 0) {
-            // Obtener la impresora por defecto (puedes seleccionar una impresora específica si lo deseas)
+            // Obtener la impresora por defecto (puedes seleccionar una impresora especï¿½fica si lo deseas)
             PrintService printService = services[0];
             PrinterJob printerJob = PrinterJob.getPrinterJob();
             
@@ -485,22 +485,22 @@ public class Mesa extends JFrame {
                         return NO_SUCH_PAGE;
                     }
 
-                    // Configurar los estilos de fuente y tamaño
+                    // Configurar los estilos de fuente y tamaï¿½o
                     Font font = new Font("Courier New", Font.PLAIN, 10);
                     graphics.setFont(font);
 
-                    // Establecer la posición inicial del contenido del ticket
+                    // Establecer la posiciï¿½n inicial del contenido del ticket
                     int x = 10;
                     int y = 10;
 
-                    // Imprimir los detalles de los artículos
+                    // Imprimir los detalles de los artï¿½culos
                     for (int i = 0; i < articulosMesa.size(); i++) {
                         ArticuloMesa a= articulosMesa.get(i);
                         String linea = String.format("%-20s %6.2f %4d", a.getArticulo_descripcion(),"x", a.getCantidad(), a.getTotal());
                         graphics.drawString(linea, x, y + i * 15);
                     }
 
-                    // Imprimir el total de la operación
+                    // Imprimir el total de la operaciï¿½n
                     graphics.drawString("-------------------------------", x, y + articulosMesa.size() * 15);
                     graphics.drawString(String.format("Total: %.2f", totalMesa(numeroMesa)), x, y + (articulosMesa.size() + 1) * 15);
 
@@ -511,7 +511,7 @@ public class Mesa extends JFrame {
             // Asignar el objeto Printable al PrinterJob
             printerJob.setPrintable(printable);
 
-            // Mostrar el diálogo de impresión y enviar el trabajo de impresión
+            // Mostrar el diï¿½logo de impresiï¿½n y enviar el trabajo de impresiï¿½n
             if (printerJob.printDialog()) {
                 try {
 					printerJob.print();
@@ -586,10 +586,10 @@ public class Mesa extends JFrame {
     public static void imprimirTextArea(JTextArea textArea) {
     	PrinterJob printerJob = PrinterJob.getPrinterJob();
 
-        // Crear un objeto PageFormat con los márgenes personalizados
+        // Crear un objeto PageFormat con los mï¿½rgenes personalizados
         PageFormat pageFormat = printerJob.defaultPage();
         Paper paper = pageFormat.getPaper();
-        double margin = 10; // Tamaño de los márgenes en puntos
+        double margin = 10; // Tamaï¿½o de los mï¿½rgenes en puntos
         paper.setImageableArea(margin, margin, paper.getWidth() - margin * 2, paper.getHeight() - margin * 2);
         pageFormat.setPaper(paper);
 
@@ -600,9 +600,9 @@ public class Mesa extends JFrame {
             // Establecer el Printable y PageFormat en el PrinterJob
             printerJob.setPrintable(printable, pageFormat);
 
-            // Mostrar el cuadro de diálogo de impresión
+            // Mostrar el cuadro de diï¿½logo de impresiï¿½n
             if (printerJob.printDialog()) {
-                // Imprimir el JTextArea con los márgenes personalizados
+                // Imprimir el JTextArea con los mï¿½rgenes personalizados
                 printerJob.print();
             }
         } catch (PrinterException e) {

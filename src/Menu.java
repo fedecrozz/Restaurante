@@ -13,6 +13,7 @@ import java.awt.Dimension;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JSeparator;
+import javax.swing.JButton;
 
 public class Menu extends JFrame {
 
@@ -99,6 +100,40 @@ public class Menu extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
+		JButton btnNewButton = new JButton("Mesas");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Principal m = new Principal();
+				m.setVisible(true);
+			}
+		});
+		btnNewButton.setBounds(560, 73, 144, 73);
+		contentPane.add(btnNewButton);
+		
+		JButton btnNewButton_1 = new JButton("Articulos");
+		btnNewButton_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Articulos a = new Articulos();
+				a.setVisible(true);
+			}
+		});
+		btnNewButton_1.setBounds(560, 219, 144, 73);
+		contentPane.add(btnNewButton_1);
+		
+		JButton btnNewButton_2 = new JButton("Categorias");
+		btnNewButton_2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Categorias c = new Categorias();
+				c.setVisible(true);
+			}
+		});
+		btnNewButton_2.setBounds(560, 365, 144, 73);
+		contentPane.add(btnNewButton_2);
+		
+		JButton btnNewButton_3 = new JButton("Meseros");
+		btnNewButton_3.setBounds(560, 511, 144, 73);
+		contentPane.add(btnNewButton_3);
+		
 		iniciarTodo();
 	}
 	
@@ -117,6 +152,4 @@ public class Menu extends JFrame {
 	public void maximizar() {
 		setExtendedState(java.awt.Frame.MAXIMIZED_BOTH);
 	}
-	
-	
 }

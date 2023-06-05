@@ -223,7 +223,7 @@ public class ArticuloModificar extends JFrame {
 							double Stock= Double.valueOf(stock.getText());
 							String Observacion = observacion.getText();
 							
-							c.setCodigo(Articulo);
+							c.setCodigo(Integer.valueOf(Articulo));
 							c.setDescripcion(Descripcion);
 							c.setCategoria(Categoria);
 							c.setCosto(Costo);
@@ -235,7 +235,7 @@ public class ArticuloModificar extends JFrame {
 							con.modificarArticulo(c);
 							con.cerrarConexion();
 							
-							JOptionPane.showMessageDialog(null, "Se modificó exitosamente el articulo "+Descripcion);
+							JOptionPane.showMessageDialog(null, "Se modificï¿½ exitosamente el articulo "+Descripcion);
 							a.iniciarArticulos();
 							this.dispose();
 							
@@ -258,7 +258,7 @@ public class ArticuloModificar extends JFrame {
     }
 	
 	public void iniciarArticulo() {
-		codigo.setText(Articulo.getCodigo());
+		codigo.setText(String.valueOf(Articulo.getCodigo()));
 		descripcion.setText(Articulo.getDescripcion());
 		categoria.setSelectedItem(Articulo.getCategoria());
 		precio.setText(quitarDecimal(String.valueOf(Articulo.getPrecio())));

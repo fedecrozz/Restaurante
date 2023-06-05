@@ -81,6 +81,7 @@ public class ArticuloNuevo extends JFrame {
 		contentPane.add(lblArticulo);
 		
 		codigo = new JTextField();
+		codigo.setEditable(false);
 		codigo.setColumns(10);
 		codigo.setBounds(60, 40, 237, 20);
 		contentPane.add(codigo);
@@ -192,12 +193,12 @@ public class ArticuloNuevo extends JFrame {
 	}
 	
 	public void guardarArticulo() {
-		String Articulo = codigo.getText().toUpperCase();		
+		int Articulo = Integer.valueOf(codigo.getText());		
 		String Descripcion = descripcion.getText();		
 		String Grupo= categoria.getSelectedItem().toString();
 		
 		con.conectar();
-		boolean existe = con.existeArticulo(Articulo);
+		boolean existe = con.existeArticulo(String.valueOf(Articulo));
 		con.cerrarConexion();
 		
 		
@@ -235,7 +236,7 @@ public class ArticuloNuevo extends JFrame {
 							con.guardarArticulo(c);
 							con.cerrarConexion();
 							
-							JOptionPane.showMessageDialog(null, "Se guardó exitosamente el articulo "+Descripcion);
+							JOptionPane.showMessageDialog(null, "Se guardï¿½ exitosamente el articulo "+Descripcion);
 							a.iniciarArticulos();
 							this.dispose();
 							

@@ -1,13 +1,14 @@
 
 public class Articulo {
 	
-	private String codigo, descripcion, categoria, observacion;
+	private String descripcion, categoria, observacion;
 	private double precio,precio2, costo, stock;
+	private int codigo;
 	
-	public String getCodigo() {
+	public int getCodigo() {
 		return codigo;
 	}
-	public void setCodigo(String codigo) {
+	public void setCodigo(int codigo) {
 		this.codigo = codigo;
 	}
 	public String getDescripcion() {

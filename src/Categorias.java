@@ -114,6 +114,23 @@ public class Categorias extends JFrame {
 		panel_1.add(btnModificarArticulo);
 		
 		JButton btnEliminarCategoria = new JButton("Eliminar Categoria");
+		btnEliminarCategoria.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if(tabla_categorias.getSelectedRow()<0) {
+					JOptionPane.showMessageDialog(null, "Primero tiene que elegir una categoria");
+				}else {
+
+					String nombre = tabla_categorias.getValueAt(tabla_categorias.getSelectedRow(), 1).toString();
+					int input = JOptionPane.showConfirmDialog(null,"¿Eliminar la categoria '"+nombre+"'?");
+					if(input == 0) {
+						con.conectar();
+						con.eliminarCategoria(nombre);
+						con.cerrarConexion();
+						iniciarCategorias();
+					}
+				}
+			}
+		});
 		btnEliminarCategoria.setBounds(877, 11, 218, 46);
 		panel_1.add(btnEliminarCategoria);
 		

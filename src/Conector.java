@@ -46,24 +46,6 @@ public class Conector {
 
 	//-------------------------------------------------
 	
-	public boolean existeCliente(String nombre) {
-		ResultSet result = null;
-		boolean ret = false;
-		
-		try {
-			PreparedStatement st = conexion.prepareStatement("select nombre from CLIENTES where cliente = '"+nombre+"'");
-			result = st.executeQuery();			
-			String Nombre= result.getString("cliente");
-            
-            if(Nombre.equals(nombre)) {
-            	ret=true;
-            }
-            
-		} catch (Exception e) {}
-				
-		return ret;
-	}
-	
 	public boolean existeCategoria(String Descripcion) {
 		ResultSet result = null;
 		boolean ret = false;
@@ -80,59 +62,6 @@ public class Conector {
 		} catch (Exception e) {}
 				
 		return ret;
-	}
-	
-	public void guardarCliente(Cliente c) {
-		try {
-			PreparedStatement st = conexion.prepareStatement("insert into CLIENTES(cliente,saldo,telefono,direccion,dni) values (?,?,?,?,?)");
-			
-            
-            st.setString(1,c.getCliente());
-            st.setDouble(2,c.getSaldo());
-            st.setString(3,c.getTelefono());
-            st.setString(4,c.getDireccion());
-            st.setString(5,c.getDni());
-            
-            st.execute();
-            
-		} catch (SQLException e) {
-			System.out.println(e);
-		}
-	}
-
-	public boolean existeProveedor(String nombre) {
-		ResultSet result = null;
-		boolean ret = false;
-		
-		try {
-			PreparedStatement st = conexion.prepareStatement("select nombre from CLIENTES where cliente = '"+nombre+"'");
-			result = st.executeQuery();			
-			String Nombre= result.getString("cliente");
-            
-            if(Nombre.equals(nombre)) {
-            	ret=true;
-            }
-            
-		} catch (Exception e) {}
-				
-		return ret;
-	}
-	
-	public void guardarProveedor(Proveedor c) {
-		try {
-			PreparedStatement st = conexion.prepareStatement("insert into PROVEEDORES(proveedor,saldo,telefono,direccion) values (?,?,?,?)");
-			
-            
-            st.setString(1,c.getProveedor());
-            st.setDouble(2,c.getSaldo());
-            st.setString(3,c.getTelefono());
-            st.setString(4,c.getDireccion());
-            
-            st.execute();
-            
-		} catch (SQLException e) {
-			System.out.println(e);
-		}
 	}
 	
 	public void guardarCategoria(String Descripcion) {
@@ -213,7 +142,7 @@ public class Conector {
 			PreparedStatement st = conexion.prepareStatement("insert into ARTICULOS(codigo,descripcion,categoria,precio,costo,stock,observacion) values (?,?,?,?,?,?,?)");
 			
             
-            st.setString(1,c.getCodigo());
+            st.setInt(1,c.getCodigo());
             st.setString(2,c.getDescripcion());
             st.setString(3,c.getCategoria());
             st.setDouble(4,c.getPrecio());
@@ -228,160 +157,6 @@ public class Conector {
 		}
 	}
 
-	public void guardarPago(Pago c) {
-		try {
-			PreparedStatement st = conexion.prepareStatement("insert into PAGOS(fecha,monto,proveedor,detalle) values (?,?,?,?)");
-			
-            
-            st.setString(1,c.getFecha());
-            st.setDouble(2,c.getMonto());
-            st.setString(3,c.getProveedor());
-            st.setString(4,c.getDetalle());
-            
-            st.execute();
-            
-		} catch (SQLException e) {
-			System.out.println(e);
-		}
-	}
-	
-	public void guardarRecibo(Recibo c) {
-		try {
-			PreparedStatement st = conexion.prepareStatement("insert into RECIBOS(fecha,monto,cliente,detalle) values (?,?,?,?)");
-			
-            
-            st.setString(1,c.getFecha());
-            st.setDouble(2,c.getMonto());
-            st.setString(3,c.getCliente());
-            st.setString(4,c.getDetalle());
-            
-            st.execute();
-            
-		} catch (SQLException e) {
-			System.out.println(e);
-		}
-	}
-	
-	public ArrayList<Proveedor> getProveedores(){
-		ArrayList<Proveedor> proveedores= new ArrayList<Proveedor>();
-		ResultSet result = null;
-		
-        try {
-        		
-            PreparedStatement st = conexion.prepareStatement("select * from PROVEEDORES order by proveedor ASC");
-            result = st.executeQuery();
-            
-            while (result.next()) {
-            	Proveedor p = new Proveedor();
-                String proveedor = result.getString("proveedor");
-                String telefono= result.getString("telefono");
-                String direccion= result.getString("direccion");
-                
-                p.setProveedor(proveedor);
-                p.setTelefono(telefono);
-                p.setDireccion(direccion);
-                
-                proveedores.add(p);
-                
-            	}
-            
-        }catch (SQLException e) {
-				System.out.println(e);
-		}
-       
-        return proveedores;
-	}
-	
-	public ArrayList<Proveedor> getProveedores(String Proveedor){
-		ArrayList<Proveedor> proveedores= new ArrayList<Proveedor>();
-		ResultSet result = null;
-		
-        try {
-        		
-            PreparedStatement st = conexion.prepareStatement("select * from PROVEEDORES where proveedor LIKE '%"+Proveedor+"%' order by proveedor ASC");
-            result = st.executeQuery();
-            
-            while (result.next()) {
-            	Proveedor p = new Proveedor();
-                String proveedor = result.getString("proveedor");
-                String telefono= result.getString("telefono");
-                String direccion= result.getString("direccion");
-                
-                p.setProveedor(proveedor);
-                p.setTelefono(telefono);
-                p.setDireccion(direccion);
-                
-                proveedores.add(p);
-                
-            	}
-            
-        }catch (SQLException e) {
-				System.out.println(e);
-		}
-       
-        return proveedores;
-	}
-	
-	public ArrayList<Cliente> getClientes(){
-		ArrayList<Cliente> clientes= new ArrayList<Cliente>();
-		ResultSet result = null;
-		
-        try {
-        		
-            PreparedStatement st = conexion.prepareStatement("select * from CLIENTES order by cliente ASC");
-            result = st.executeQuery();
-            
-            while (result.next()) {
-            	Cliente p = new Cliente();
-                String cliente= result.getString("cliente");
-                String telefono= result.getString("telefono");
-                String direccion= result.getString("direccion");
-                
-                p.setCliente(cliente);
-                p.setTelefono(telefono);
-                p.setDireccion(direccion);
-                
-                clientes.add(p);
-                
-            	}
-            
-        }catch (SQLException e) {
-				System.out.println(e);
-		}
-       
-        return clientes;
-	}
-	
-	public ArrayList<Cliente> getClientes(String Cliente){
-		ArrayList<Cliente> clientes= new ArrayList<Cliente>();
-		ResultSet result = null;
-		
-        try {
-        		
-            PreparedStatement st = conexion.prepareStatement("select * from CLIENTES where cliente LIKE '%"+Cliente+"%' order by cliente ASC");
-            result = st.executeQuery();
-            
-            while (result.next()) {
-            	Cliente p = new Cliente();
-                String cliente= result.getString("cliente");
-                String telefono= result.getString("telefono");
-                String direccion= result.getString("direccion");
-                
-                p.setCliente(cliente);
-                p.setTelefono(telefono);
-                p.setDireccion(direccion);
-                
-                clientes.add(p);
-                
-            	}
-            
-        }catch (SQLException e) {
-				System.out.println(e);
-		}
-       
-        return clientes;
-	}
-	
 	public ArrayList<Articulo> getArticulos(){
 		ArrayList<Articulo> articulos= new ArrayList<Articulo>();
 		ResultSet result = null;
@@ -393,7 +168,7 @@ public class Conector {
             
             while (result.next()) {
             	Articulo p = new Articulo();
-                String codigo= result.getString("codigo");
+                int codigo= result.getInt("codigo");
                 String descripcion= result.getString("descripcion");
                 String categoria= result.getString("categoria");
                 double precio= result.getDouble("precio");
@@ -432,7 +207,7 @@ public class Conector {
             
             while (result.next()) {
             	Articulo p = new Articulo();
-                String codigo= result.getString("codigo");
+                int codigo= result.getInt("codigo");
                 String descripcion= result.getString("descripcion");
                 String categoria= result.getString("categoria");
                 double precio= result.getDouble("precio");
@@ -466,12 +241,12 @@ public class Conector {
 		
         try {
         		
-            PreparedStatement st = conexion.prepareStatement("select * from ARTICULOS where descripcion LIKE '%"+Articulo+"%' order by codigo ASC");
+            PreparedStatement st = conexion.prepareStatement("select * from ARTICULOS where descripcion LIKE '%"+Articulo+"%' order by descripcion ASC");
             result = st.executeQuery();
             
             while (result.next()) {
             	Articulo p = new Articulo();
-                String codigo= result.getString("codigo");
+                int codigo= result.getInt("codigo");
                 String descripcion= result.getString("descripcion");
                 String categoria= result.getString("categoria");
                 double precio= result.getDouble("precio");
@@ -537,7 +312,7 @@ public class Conector {
             
             while (result.next()) {
             	Articulo p = new Articulo();
-                String codigo= result.getString("codigo");
+                int codigo= result.getInt("codigo");
                 String descripcion= result.getString("descripcion");
                 String categoria= result.getString("categoria");
                 double precio= result.getDouble("precio");
@@ -586,145 +361,7 @@ public class Conector {
 			System.out.println(e);
 		}
 	}
-	
-	
-	
-	public ArrayList<Pago> getPagos(){
-		ArrayList<Pago> pagos= new ArrayList<Pago>();
-		ResultSet result = null;
 		
-        try {
-        		
-            PreparedStatement st = conexion.prepareStatement("select * from PAGOS order by numero ASC");
-            result = st.executeQuery();
-            
-            while (result.next()) {
-            	Pago p = new Pago();
-                int numero= result.getInt("numero");
-                String fecha= result.getString("fecha");
-                double monto= result.getDouble("monto");                
-                String proveedor= result.getString("proveedor");
-                String detalle= result.getString("detalle");
-                
-                p.setNumero(numero);
-                p.setFecha(fecha);
-                p.setMonto(monto);
-                p.setProveedor(proveedor);
-                p.setDetalle(detalle);
-                
-                pagos.add(p);     
-            	}
-            	
-        }catch (SQLException e) {
-        	System.out.println(e);
-            }
-       
-        return pagos;
-	}
-	
-	public ArrayList<Pago> getPagos(String Proveedor,String fecha_desde, String fecha_hasta){
-		ArrayList<Pago> pagos= new ArrayList<Pago>();
-		ResultSet result = null;
-		fecha_desde+= " 00:00:00";
-		fecha_hasta+= " 23:59:59";
-		
-        try {
-        		
-            PreparedStatement st = conexion.prepareStatement("select * from PAGOS where proveedor LIKE '%"+Proveedor+"%' and fecha between '"+fecha_desde+"' and '"+fecha_hasta+"' order by numero ASC");
-            result = st.executeQuery();
-            
-            while (result.next()) {
-            	Pago p = new Pago();
-                int numero= result.getInt("numero");
-                String fecha= result.getString("fecha");
-                double monto= result.getDouble("monto");                
-                String proveedor= result.getString("proveedor");
-                String detalle= result.getString("detalle");
-                
-                p.setNumero(numero);
-                p.setFecha(fecha);
-                p.setMonto(monto);
-                p.setProveedor(proveedor);
-                p.setDetalle(detalle);
-                
-                pagos.add(p);     
-            	}
-            	
-        }catch (SQLException e) {
-        	System.out.println(e);
-            }
-       
-        return pagos;
-	}
-                
-	public ArrayList<Recibo> getRecibos(){
-		ArrayList<Recibo> recibos= new ArrayList<Recibo>();
-		ResultSet result = null;
-		
-        try {
-        		
-            PreparedStatement st = conexion.prepareStatement("select * from RECIBOS order by numero ASC");
-            result = st.executeQuery();
-            
-            while (result.next()) {
-            	Recibo p = new Recibo();
-                int numero= result.getInt("numero");
-                String fecha= result.getString("fecha");
-                double monto= result.getDouble("monto");                
-                String cliente= result.getString("cliente");
-                String detalle= result.getString("detalle");
-                
-                p.setNumero(numero);
-                p.setFecha(fecha);
-                p.setMonto(monto);
-                p.setCliente(cliente);
-                p.setDetalle(detalle);
-                
-                recibos.add(p);     
-            	}
-            	
-        }catch (SQLException e) {
-        	System.out.println(e);
-            }
-       
-        return recibos;
-	}
-	
-	public ArrayList<Recibo> getRecibos(String Cliente,String fecha_desde, String fecha_hasta){
-		ArrayList<Recibo> recibos= new ArrayList<Recibo>();
-		ResultSet result = null;
-		fecha_desde+= " 00:00:00";
-		fecha_hasta+= " 23:59:59";
-		
-        try {
-        		
-            PreparedStatement st = conexion.prepareStatement("select * from RECIBOS where cliente LIKE '%"+Cliente+"%' and fecha between '"+fecha_desde+"' and '"+fecha_hasta+"' order by numero ASC");
-            result = st.executeQuery();
-            
-            while (result.next()) {
-            	Recibo p = new Recibo();
-                int numero= result.getInt("numero");
-                String fecha= result.getString("fecha");
-                double monto= result.getDouble("monto");                
-                String cliente= result.getString("cliente");
-                String detalle= result.getString("detalle");
-                
-                p.setNumero(numero);
-                p.setFecha(fecha);
-                p.setMonto(monto);
-                p.setCliente(cliente);
-                p.setDetalle(detalle);
-                
-                recibos.add(p);     
-            	}
-            	
-        }catch (SQLException e) {
-        	System.out.println(e);
-            }
-       
-        return recibos;
-	}
-	
 	public Articulo getArticulo(String Articulo) {		
 		ResultSet result = null;
 		Articulo p = null;
@@ -733,7 +370,7 @@ public class Conector {
 			result = st.executeQuery();			
 			
             p = new Articulo();
-            String codigo= result.getString("codigo");
+            int codigo= result.getInt("codigo");
             String descripcion= result.getString("descripcion");
             String categoria= result.getString("categoria");
             double precio= result.getDouble("precio");
@@ -848,50 +485,6 @@ public class Conector {
 		
 	}
 	
-	
- 	public void guardarVenta(Venta v) {
-		try {
-			PreparedStatement st = conexion.prepareStatement("insert into VENTAS(numero,fecha,cliente,camion,forma_de_pago,total_venta,total_costo,haber,detalle,ganancia) values (?,?,?,?,?,?,?,?,?,?)");
-			
-            
-            st.setInt(1,v.getNumero());
-            st.setString(2,v.getFecha());
-            st.setString(3,v.getCliente());
-            st.setString(4,v.getCamion());
-            st.setString(5,v.getForma_de_pago());
-            st.setDouble(6,v.getPrecio_venta());
-            st.setDouble(7,v.getPrecio_costo());
-            st.setDouble(8,v.getHaber());
-            st.setString(9,v.getDetalle());
-            st.setDouble(10,v.getGanancia());
-            
-            st.execute();
-            
-		} catch (SQLException e) {
-			System.out.println(e);
-		}
-	}
-	
-	public void guardarCompra (Compra v) {
-		try {
-			PreparedStatement st = conexion.prepareStatement("insert into COMPRAS(numero,fecha,proveedor,forma_de_pago,total,detalle,haber) values (?,?,?,?,?,?,?)");
-			
-            
-            st.setInt(1,v.getNumero());
-            st.setString(2,v.getFecha());
-            st.setString(3,v.getProveedor());
-            st.setString(4,v.getForma_de_pago());
-            st.setDouble(5,v.getTotal());
-            st.setString(6,v.getDetalle());
-            st.setDouble(7,v.getHaber());
-            
-            st.execute();
-            
-		} catch (SQLException e) {
-			System.out.println(e);
-		}
-	}
-	
 	public int getNumeroUltima_Venta() {
 		
 		int numero = 0;
@@ -920,292 +513,6 @@ public class Conector {
 			}		
 			return numero;		
 		
-	}
-	
-	public void guardarVentaDetalle(ArticuloSeleccionado v, int numero_venta) {
-		try {
-			PreparedStatement st = conexion.prepareStatement("insert into VENTAS_ARTICULOS(venta_numero,articulo,cantidad,precio_unitario,precio_costo,subtotal,subtotal_costo,ganancia) values (?,?,?,?,?,?,?,?)");
-			
-            
-            st.setInt(1,numero_venta);
-            st.setString(2,v.getArticulo());
-            st.setDouble(3,v.getCantidad());
-            st.setDouble(4,v.getPrecio_unitario());
-            st.setDouble(5,v.getPrecio_costo());
-            st.setDouble(6,v.getSubtotal());
-            st.setDouble(7,v.getSubtotal_costo());
-            st.setDouble(8,v.getGanancia());
-            
-            st.execute();
-            
-		} catch (SQLException e) {
-			System.out.println(e);
-		}
-		
-	}
-	
-	public void guardarCompraDetalle(ArticuloSeleccionadoCompra v, int numero_compra) {
-		try {
-			PreparedStatement st = conexion.prepareStatement("insert into COMPRAS_ARTICULOS(compra_numero,articulo,cantidad,precio_costo,subtotal) values (?,?,?,?,?)");
-			
-            
-            st.setInt(1,numero_compra);
-            st.setString(2,v.getArticulo());
-            st.setDouble(3,v.getCantidad());
-            st.setDouble(4,v.getPrecio_costo());
-            st.setDouble(5,v.getSubtotal());
-            
-            st.execute();
-            
-		} catch (SQLException e) {
-			System.out.println(e);
-		}
-	}
-
-	public ArrayList<Venta> getVentas(String fecha_desde, String fecha_hasta,String Camion, String Cliente, String Forma_de_pago){
-		fecha_desde+= " 00:00:00";
-		fecha_hasta+= " 23:59:59";
-		
-		String Query ="select * from VENTAS where fecha between '"+fecha_desde+"' and '"+fecha_hasta+"'";
-
-		if(!Camion.equals("TODOS")) {
-				Query+= " and camion = '"+Camion+"'  ";
-			}
-		
-		if(!Cliente.equals("TODOS")) {
-			Query+= " and cliente = '"+Cliente+"'  ";
-		}
-		
-		if(!Forma_de_pago.equals("TODAS")) {
-			Query+= " and forma_de_pago = '"+Forma_de_pago+"'  ";
-		}
-		
-		Query+= " order by numero DESC";	
-		ArrayList<Venta> ventas= new ArrayList<Venta>();
-		ResultSet result = null;
-		
-        try {
-        		
-            PreparedStatement st = conexion.prepareStatement(Query);
-            result = st.executeQuery();
-            
-            while (result.next()) {
-            	Venta p = new Venta();
-                int numero= result.getInt("numero");
-                String fecha= result.getString("fecha");              
-                String cliente= result.getString("cliente");
-                String camion= result.getString("camion");
-                String forma_de_pago= result.getString("forma_de_pago");              
-                double total_venta= result.getDouble("total_venta");
-                double total_costo= result.getDouble("total_costo");
-                double haber= result.getDouble("haber");              
-                String detalle= result.getString("detalle");
-                double ganancia= result.getDouble("ganancia");
-                
-                p.setNumero(numero);
-                p.setFecha(fecha);
-                p.setCliente(cliente);
-                p.setCamion(camion);
-                p.setForma_de_pago(forma_de_pago);
-                p.setPrecio_venta(total_venta);
-                p.setPrecio_costo(total_costo);
-                p.setHaber(haber);
-                p.setDetalle(detalle);
-                p.setGanancia(ganancia);
-                
-                ventas.add(p);     
-            	}
-            	
-        }catch (SQLException e) {
-        	System.out.println(e);
-            }
-        return ventas;
-	}
-	
-	public Venta getVenta(int Numero) {
-		Venta p = new Venta();
-		ResultSet result = null;
-		try {
-            PreparedStatement st = conexion.prepareStatement("select * from VENTAS where numero = "+Numero);
-            result = st.executeQuery();
-                       
-            int numero= result.getInt("numero");
-            String fecha= result.getString("fecha");              
-            String cliente= result.getString("cliente");
-            String camion= result.getString("camion");
-            String forma_de_pago= result.getString("forma_de_pago");              
-            double total_venta= result.getDouble("total_venta");
-            double total_costo= result.getDouble("total_costo");
-            double haber= result.getDouble("haber");              
-            String detalle= result.getString("detalle");
-            double ganancia= result.getDouble("ganancia");
-            
-            p.setNumero(numero);
-            p.setFecha(fecha);
-            p.setCliente(cliente);
-            p.setCamion(camion);
-            p.setForma_de_pago(forma_de_pago);
-            p.setPrecio_venta(total_venta);
-            p.setPrecio_costo(total_costo);
-            p.setHaber(haber);
-            p.setDetalle(detalle);
-            p.setGanancia(ganancia);
-                           	
-        }catch (SQLException e) {
-        	System.out.println(e);
-        }
-        return p;
-	}
-
-	public Compra getCompra(int Numero) {
-		Compra p = new Compra();
-		ResultSet result = null;
-		try {
-            PreparedStatement st = conexion.prepareStatement("select * from COMPRAS where numero = "+Numero);
-            result = st.executeQuery();
-                       
-            int numero= result.getInt("numero");
-            String fecha= result.getString("fecha");              
-            String proveedor= result.getString("proveedor");
-            String forma_de_pago= result.getString("forma_de_pago");              
-            double total= result.getDouble("total");
-            double haber= result.getDouble("haber");              
-            String detalle= result.getString("detalle");
-            
-            p.setNumero(numero);
-            p.setFecha(fecha);
-            p.setProveedor(proveedor);
-            p.setForma_de_pago(forma_de_pago);
-            p.setTotal(total);
-            p.setHaber(haber);
-            p.setDetalle(detalle);
-                           	
-        }catch (SQLException e) {
-        	System.out.println(e);
-        }
-        return p;
-	}
-	
-
-	public ArrayList<Compra> getCompras(String fecha_desde, String fecha_hasta,String Proveedor, String Forma_de_pago){
-		fecha_desde+= " 00:00:00";
-		fecha_hasta+= " 23:59:59";
-		
-		String Query ="select * from COMPRAS where fecha between '"+fecha_desde+"' and '"+fecha_hasta+"'";
-
-		if(!Proveedor.equals("TODOS")) {
-			Query+= " and proveedor = '"+Proveedor+"'  ";
-		}
-		
-		if(!Forma_de_pago.equals("TODAS")) {
-			Query+= " and forma_de_pago = '"+Forma_de_pago+"'  ";
-		}
-		
-		Query+= " order by numero DESC";	
-		ArrayList<Compra> compras= new ArrayList<Compra>();
-		ResultSet result = null;
-		
-        try {
-        		
-            PreparedStatement st = conexion.prepareStatement(Query);
-            result = st.executeQuery();
-            
-            while (result.next()) {
-            	Compra p = new Compra();
-                int numero= result.getInt("numero");
-                String fecha= result.getString("fecha");              
-                String proveedor= result.getString("proveedor");
-                String forma_de_pago= result.getString("forma_de_pago");              
-                double total= result.getDouble("total");
-                double haber= result.getDouble("haber");              
-                String detalle= result.getString("detalle");
-                
-                p.setNumero(numero);
-                p.setFecha(fecha);
-                p.setProveedor(proveedor);
-                p.setForma_de_pago(forma_de_pago);
-                p.setTotal(total);
-                p.setHaber(haber);
-                p.setDetalle(detalle);
-                
-                compras.add(p);     
-            	}
-            	
-        }catch (SQLException e) {
-        	System.out.println(e);
-            }
-        return compras;
-	}
-	
-	public  ArrayList<ArticuloSeleccionado> getVentasArticulos(int numero_venta){
-		
-		String Query ="select * from VENTAS_ARTICULOS where venta_numero = '"+numero_venta+"'";
-
-		ArrayList<ArticuloSeleccionado> articulos= new ArrayList<ArticuloSeleccionado>();
-		ResultSet result = null;
-        try {
-        		
-            PreparedStatement st = conexion.prepareStatement(Query);
-            result = st.executeQuery();
-            
-            while (result.next()) {
-            	ArticuloSeleccionado p = new ArticuloSeleccionado();
-            	
-                String articulo= result.getString("articulo");              
-                int cantidad= result.getInt("cantidad");
-                double precio_venta= result.getDouble("precio_unitario");
-                double precio_costo= result.getDouble("precio_costo");              
-                double subtotal_venta= result.getDouble("subtotal");
-                double total_costo= result.getDouble("subtotal_costo");
-                double ganancia= result.getDouble("ganancia");
-                
-                p.setArticulo(articulo);
-                p.setCantidad(cantidad);
-                p.setPrecio_unitario(precio_venta);
-                p.setPrecio_costo(precio_costo);
-                p.setSubtotal(subtotal_venta);
-                p.setSubtotal_costo(total_costo);
-                p.setGanancia(ganancia);
-                
-                articulos.add(p);     
-            	}
-            	
-        }catch (SQLException e) {
-        	System.out.println(e);
-            }
-        return articulos;
-	}
-
-	public ArrayList<ArticuloSeleccionadoCompra> getComprasArticulos(int numero_compra){
-		String Query ="select * from COMPRAS_ARTICULOS where compra_numero = '"+numero_compra+"'";
-
-		ArrayList<ArticuloSeleccionadoCompra> articulos= new ArrayList<ArticuloSeleccionadoCompra>();
-		ResultSet result = null;
-        try {
-        		
-            PreparedStatement st = conexion.prepareStatement(Query);
-            result = st.executeQuery();
-            
-            while (result.next()) {
-            	ArticuloSeleccionadoCompra p = new ArticuloSeleccionadoCompra();
-            	
-                String articulo= result.getString("articulo");              
-                double cantidad= result.getDouble("cantidad");
-                double precio_costo= result.getDouble("precio_costo");              
-                double subtotal= result.getDouble("subtotal");
-                
-                p.setArticulo(articulo);
-                p.setCantidad(cantidad);
-                p.setPrecio_costo(precio_costo);
-                p.setSubtotal(subtotal);
-                
-                articulos.add(p);     
-            	}
-            	
-        }catch (SQLException e) {
-        	System.out.println(e);
-            }
-        return articulos;
 	}
 	
 	public double ejecutarQuery(String query,String get) {
@@ -1249,6 +556,15 @@ public class Conector {
 		}
 	}
 	
+	public void eliminarCategoria(String Descripcion) {
+		try {
+			 PreparedStatement ps = conexion.prepareStatement("delete from CATEGORIAS where descripcion='"+Descripcion+"'");
+			 ps.executeUpdate();
+		} catch (SQLException e) {
+			System.out.println(e);
+		}
+	}
+	
 	public void eliminarArticulosVenta(int numero) {
 		try {
 			 PreparedStatement ps = conexion.prepareStatement("delete from VENTAS_ARTICULOS where venta_numero='"+numero+"'");
@@ -1279,42 +595,6 @@ public class Conector {
 	public void eliminarArticulo(String articulo) {
 		try {
 			 PreparedStatement ps = conexion.prepareStatement("delete from ARTICULOS where codigo ='"+articulo+"'");
-			 ps.executeUpdate();
-		} catch (SQLException e) {
-			System.out.println(e);
-		}
-	}
-	
-	public void eliminarCliente(String cliente) {
-		try {
-			 PreparedStatement ps = conexion.prepareStatement("delete from CLIENTES where cliente ='"+cliente+"'");
-			 ps.executeUpdate();
-		} catch (SQLException e) {
-			System.out.println(e);
-		}
-	}
-	
-	public void eliminarProveedor(String proveedor) {
-		try {
-			 PreparedStatement ps = conexion.prepareStatement("delete from PROVEEDORES where proveedor ='"+proveedor+"'");
-			 ps.executeUpdate();
-		} catch (SQLException e) {
-			System.out.println(e);
-		}
-	}
-	
-	public void eliminarRecibo(int numero) {
-		try {
-			 PreparedStatement ps = conexion.prepareStatement("delete from RECIBOS where numero ='"+numero+"'");
-			 ps.executeUpdate();
-		} catch (SQLException e) {
-			System.out.println(e);
-		}
-	}
-	
-	public void eliminarPago(int numero) {
-		try {
-			 PreparedStatement ps = conexion.prepareStatement("delete from PAGOS where numero ='"+numero+"'");
 			 ps.executeUpdate();
 		} catch (SQLException e) {
 			System.out.println(e);
@@ -1367,8 +647,6 @@ public class Conector {
 		}
 	}
 
-	
-	
 	public double getTotalMesa(int numeroMesa) {
 
 		double total = 0;
