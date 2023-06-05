@@ -64,6 +64,24 @@ public class Conector {
 		return ret;
 	}
 	
+	public boolean existeCategoria(String Descripcion) {
+		ResultSet result = null;
+		boolean ret = false;
+		
+		try {
+			PreparedStatement st = conexion.prepareStatement("select descripcion from CATEGORIAS where descripcion= '"+Descripcion+"'");
+			result = st.executeQuery();			
+			String descripcion= result.getString("descripcion");
+            
+            if(descripcion.equals(Descripcion)) {
+            	ret=true;
+            }
+            
+		} catch (Exception e) {}
+				
+		return ret;
+	}
+	
 	public void guardarCliente(Cliente c) {
 		try {
 			PreparedStatement st = conexion.prepareStatement("insert into CLIENTES(cliente,saldo,telefono,direccion,dni) values (?,?,?,?,?)");
@@ -117,12 +135,48 @@ public class Conector {
 		}
 	}
 	
+	public void guardarCategoria(String Descripcion) {
+		try {
+			PreparedStatement st = conexion.prepareStatement("insert into CATEGORIAS (codigo, descripcion) values (?,?)");
+			String ultimo = getCodigoUltimaCategoria();
+			
+            
+            st.setString(1,String.valueOf(Integer.valueOf(ultimo)+1));
+            st.setString(2,Descripcion);
+            
+            st.execute();
+            
+		} catch (SQLException e) {
+			System.out.println(e);
+		}
+	}
+	
+	public String getCodigoUltimaCategoria() {
+	
+		
+		ResultSet result = null;
+		String codigo = "";
+		
+		
+		try {			
+			PreparedStatement st = conexion.prepareStatement("select * from CATEGORIAS order by codigo DESC limit 1");
+			result = st.executeQuery();			
+			
+            codigo= result.getString("codigo");
+            
+		} catch (SQLException ex) {
+			System.out.println(ex);
+		}
+		return codigo;
+	}
+	
+	
 	public boolean existeArticulo(String nombre) {
 		ResultSet result = null;
 		boolean ret = false;
 		
 		try {
-			PreparedStatement st = conexion.prepareStatement("select nombre from ARTICULOS where descripcion = '"+nombre+"'");
+			PreparedStatement st = conexion.prepareStatement("select nombre from ARTICULOS where codigo = '"+nombre+"'");
 			result = st.executeQuery();			
 			String Nombre= result.getString("descripcion");
             
@@ -156,15 +210,16 @@ public class Conector {
 	
 	public void guardarArticulo(Articulo c) {
 		try {
-			PreparedStatement st = conexion.prepareStatement("insert into ARTICULOS(articulo,descripcion,precio_venta,precio_costo,grupo,stock) values (?,?,?,?,?,?)");
+			PreparedStatement st = conexion.prepareStatement("insert into ARTICULOS(codigo,descripcion,categoria,precio,costo,stock,observacion) values (?,?,?,?,?,?,?)");
 			
             
-            st.setString(1,c.getArticulo());
+            st.setString(1,c.getCodigo());
             st.setString(2,c.getDescripcion());
-            st.setDouble(3,c.getPrecio_venta());
-            st.setDouble(4,c.getPrecio_costo());
-            st.setString(5,c.getGrupo());
+            st.setString(3,c.getCategoria());
+            st.setDouble(4,c.getPrecio());
+            st.setDouble(5,c.getCosto());
             st.setDouble(6,c.getStock());
+            st.setString(7,c.getObservacion());
             
             st.execute();
             
@@ -411,7 +466,7 @@ public class Conector {
 		
         try {
         		
-            PreparedStatement st = conexion.prepareStatement("select * from ARTICULOS where codigo LIKE '%"+Articulo+"%' order by codigo ASC");
+            PreparedStatement st = conexion.prepareStatement("select * from ARTICULOS where descripcion LIKE '%"+Articulo+"%' order by codigo ASC");
             result = st.executeQuery();
             
             while (result.next()) {
@@ -469,6 +524,45 @@ public class Conector {
 		}
        
         return categorias;
+	}
+	
+	public ArrayList<Articulo> getArticulosCategoria(String Categoria){
+		ArrayList<Articulo> articulos= new ArrayList<Articulo>();
+		ResultSet result = null;
+		
+        try {
+        		
+            PreparedStatement st = conexion.prepareStatement("select * from ARTICULOS where categoria ='"+Categoria+"' order by codigo ASC");
+            result = st.executeQuery();
+            
+            while (result.next()) {
+            	Articulo p = new Articulo();
+                String codigo= result.getString("codigo");
+                String descripcion= result.getString("descripcion");
+                String categoria= result.getString("categoria");
+                double precio= result.getDouble("precio");
+                double precio2= result.getDouble("precio2");
+                double costo= result.getDouble("costo");
+                String observacion= result.getString("observacion");
+                double stock= result.getDouble("stock");
+                
+                p.setCodigo(codigo);
+                p.setCategoria(categoria);                
+                p.setDescripcion(descripcion);
+                p.setPrecio(precio);
+                p.setPrecio2(precio2);
+                p.setCosto(costo);
+                p.setStock(stock);
+                p.setObservacion(observacion);
+                articulos.add(p);
+                
+            	}
+            
+        }catch (SQLException e) {
+				System.out.println(e);
+		}
+       
+        return articulos;
 	}
 	
 	public void guardarMesa(int numeroMesa, ArticuloMesa m) {
@@ -1184,7 +1278,7 @@ public class Conector {
 	
 	public void eliminarArticulo(String articulo) {
 		try {
-			 PreparedStatement ps = conexion.prepareStatement("delete from ARTICULOS where articulo ='"+articulo+"'");
+			 PreparedStatement ps = conexion.prepareStatement("delete from ARTICULOS where codigo ='"+articulo+"'");
 			 ps.executeUpdate();
 		} catch (SQLException e) {
 			System.out.println(e);
@@ -1252,15 +1346,20 @@ public class Conector {
 
 	public void modificarArticulo(Articulo c) {
 		try {
-			 PreparedStatement ps = conexion.prepareStatement(
-					"update ARTICULOS set "+			 
+			
+			String query = "update ARTICULOS set "+			 
 					"descripcion = '"+c.getDescripcion()+"',"+
-					"precio_venta = '"+c.getPrecio_venta()+"',"+
-					"precio_costo = '"+c.getPrecio_costo()+"',"+
-					"grupo = '"+c.getGrupo()+"',"+
-					"stock = '"+c.getStock()+"'"+
-					"WHERE articulo = '"+c.getArticulo()+"'"
-					 );
+					"precio = '"+c.getPrecio()+"',"+
+					"costo = '"+c.getCosto()+"',"+
+					"categoria = '"+c.getCategoria()+"',"+
+					"stock = '"+c.getStock()+"',"+
+					"observacion = '"+c.getObservacion()+"' "+
+					"WHERE codigo = '"+c.getCodigo()+"'";
+					
+					
+			 PreparedStatement ps = conexion.prepareStatement(query);
+			 
+			 			 
 			 
 				    ps.executeUpdate();
 		} catch (SQLException e) {

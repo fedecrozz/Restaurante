@@ -4,20 +4,33 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import java.awt.Color;
+import java.awt.Dimension;
+
 import javax.swing.JButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.Font;
+import java.awt.Toolkit;
+import java.util.ArrayList;
+
 import javax.swing.SwingConstants;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class Categorias extends JFrame {
 
 	private JPanel contentPane;
-	private JTable table;
-	private JTable table_1;
-	private JTable table_2;
+	private JTable tabla_categorias;
+	private DefaultTableModel modelo = new DefaultTableModel();
+	private DefaultTableModel modelo1 = new DefaultTableModel();
+	private DefaultTableModel modelo2 = new DefaultTableModel();
+	private Conector con = new Conector();
 
 	/**
 	 * Launch the application.
@@ -49,51 +62,13 @@ public class Categorias extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		JButton btnNewButton = new JButton("<---");
-		btnNewButton.setBounds(587, 200, 89, 88);
-		contentPane.add(btnNewButton);
-		
-		JButton btnNewButton_1 = new JButton("--->");
-		btnNewButton_1.setBounds(587, 299, 89, 88);
-		contentPane.add(btnNewButton_1);
-		
-		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(10, 200, 559, 391);
-		contentPane.add(scrollPane);
-		
-		table = new JTable();
-		table.setModel(new DefaultTableModel(
-			new Object[][] {
-				{null, null},
-			},
-			new String[] {
-				"Codigo", "Descripcion"
-			}
-		));
-		table.getColumnModel().getColumn(1).setPreferredWidth(91);
-		scrollPane.setViewportView(table);
-		
-		JScrollPane scrollPane_1 = new JScrollPane();
-		scrollPane_1.setBounds(695, 200, 559, 391);
-		contentPane.add(scrollPane_1);
-		
-		table_1 = new JTable();
-		table_1.setModel(new DefaultTableModel(
-			new Object[][] {
-				{null, null},
-			},
-			new String[] {
-				"Codigo", "Descripcion"
-			}
-		));
-		scrollPane_1.setViewportView(table_1);
-		
 		JScrollPane scrollPane_2 = new JScrollPane();
-		scrollPane_2.setBounds(10, 11, 1244, 160);
+		scrollPane_2.setBounds(10, 11, 1244, 580);
 		contentPane.add(scrollPane_2);
 		
-		table_2 = new JTable();
-		table_2.setModel(new DefaultTableModel(
+		tabla_categorias = new JTable();
+		
+		tabla_categorias.setModel(new DefaultTableModel(
 			new Object[][] {
 				{null, null},
 			},
@@ -101,21 +76,7 @@ public class Categorias extends JFrame {
 				"Codigo", "Descripcion"
 			}
 		));
-		scrollPane_2.setViewportView(table_2);
-		
-		JLabel lblNewLabel = new JLabel("Articulos dentro de esta categoria");
-		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel.setForeground(Color.WHITE);
-		lblNewLabel.setFont(new Font("Segoe UI Semibold", Font.PLAIN, 14));
-		lblNewLabel.setBounds(10, 175, 559, 20);
-		contentPane.add(lblNewLabel);
-		
-		JLabel lblArticulos = new JLabel("Articulos");
-		lblArticulos.setHorizontalAlignment(SwingConstants.CENTER);
-		lblArticulos.setForeground(Color.WHITE);
-		lblArticulos.setFont(new Font("Segoe UI Semibold", Font.PLAIN, 14));
-		lblArticulos.setBounds(695, 175, 559, 20);
-		contentPane.add(lblArticulos);
+		scrollPane_2.setViewportView(tabla_categorias);
 		
 		JPanel panel_1 = new JPanel();
 		panel_1.setLayout(null);
@@ -123,6 +84,28 @@ public class Categorias extends JFrame {
 		contentPane.add(panel_1);
 		
 		JButton btnAgregarCategoria = new JButton("Agregar Categoria");
+		btnAgregarCategoria.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String descripcion = JOptionPane.showInputDialog("Ingrese el nombre de la categoria");
+				descripcion = descripcion.toUpperCase();
+				
+				con.conectar();
+				boolean existe = con.existeCategoria(descripcion);
+				con.cerrarConexion();
+				
+				if(existe) {
+					JOptionPane.showMessageDialog(null, "Ya existe una categoria con ese nombre");
+				}else {
+					con.conectar();
+					con.guardarCategoria(descripcion);
+					con.cerrarConexion();
+					
+					JOptionPane.showMessageDialog(null, "Categoria agregada correctamente");
+					iniciarCategorias();
+				}
+				
+			}
+		});
 		btnAgregarCategoria.setBounds(147, 11, 218, 46);
 		panel_1.add(btnAgregarCategoria);
 		
@@ -133,5 +116,64 @@ public class Categorias extends JFrame {
 		JButton btnEliminarCategoria = new JButton("Eliminar Categoria");
 		btnEliminarCategoria.setBounds(877, 11, 218, 46);
 		panel_1.add(btnEliminarCategoria);
+		
+		iniciarTodo();
+	}
+	
+	public void iniciarTodo() {
+		centrarPantalla();
+		iniciarCategorias();
+	}
+	
+	public void iniciarCategorias() {
+		modelo = new DefaultTableModel();		
+		
+		con.conectar();
+		ArrayList<Categoria> categorias = con.getCategorias();
+		con.cerrarConexion();
+		
+		modelo.addColumn("Codigo");
+		modelo.addColumn("Descripcion");
+		
+		
+		for(int i = 0 ; i< categorias.size();i++) {
+			Categoria m = categorias.get(i);
+			modelo.addRow(new Object[] {m.getCodigo(),m.getDescripcion()});
+			}
+		tabla_categorias.setModel(modelo);
+		
+		
+		
+	}
+
+	public void centrarPantalla() {
+		Toolkit toolkit =  getToolkit();
+		Dimension size = toolkit.getScreenSize();
+		setLocation(size.width/2 - getWidth()/2, size.height/2 - getHeight()/2);
+	}
+	
+
+	public void actualizarTablaCategoriaSeleccionada() {
+		String descripcion = tabla_categorias.getValueAt(tabla_categorias.getSelectedRow(), 1).toString();
+		modelo1 = new DefaultTableModel();
+		
+		con.conectar();
+		ArrayList<Articulo> articulos = con.getArticulosCategoria(descripcion);
+		con.cerrarConexion();
+		
+		
+		modelo1.addColumn("Codigo");
+		modelo1.addColumn("Descripcion");
+		
+		
+		for(int i = 0 ; i< articulos.size();i++) {
+			Articulo a = articulos.get(i);
+			modelo1.addRow(new Object[] {a.getCodigo(),a.getDescripcion()});
+			}
+		
+		//table_1.setModel(modelo1);
+		
+		
+		
 	}
 }

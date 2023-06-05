@@ -35,6 +35,7 @@ public class ArticuloNuevo extends JFrame {
 	private Conector con = new Conector();
 	private Articulos a;
 	private JComboBox categoria;
+	private JTextField observacion;
 
 	/**
 	 * Launch the application.
@@ -60,7 +61,7 @@ public class ArticuloNuevo extends JFrame {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setResizable(false);
 		setTitle("Articulo Nuevo");
-		setBounds(100, 100, 373, 432);
+		setBounds(100, 100, 373, 517);
 		contentPane = new JPanel();
 		contentPane.setBackground(Color.DARK_GRAY);
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -76,69 +77,69 @@ public class ArticuloNuevo extends JFrame {
 		JLabel lblArticulo = new JLabel("Codigo");
 		lblArticulo.setForeground(Color.WHITE);
 		lblArticulo.setFont(new Font("Segoe UI Semibold", Font.BOLD, 13));
-		lblArticulo.setBounds(60, 5, 237, 26);
+		lblArticulo.setBounds(60, 7, 237, 26);
 		contentPane.add(lblArticulo);
 		
 		codigo = new JTextField();
 		codigo.setColumns(10);
-		codigo.setBounds(60, 36, 237, 20);
+		codigo.setBounds(60, 40, 237, 20);
 		contentPane.add(codigo);
 		
 		descripcion = new JTextField();
 		descripcion.setColumns(10);
-		descripcion.setBounds(60, 92, 237, 20);
+		descripcion.setBounds(60, 100, 237, 20);
 		contentPane.add(descripcion);
 		
 		JLabel lblDescripcion = new JLabel("Descripcion");
 		lblDescripcion.setForeground(Color.WHITE);
 		lblDescripcion.setFont(new Font("Segoe UI Semibold", Font.BOLD, 13));
-		lblDescripcion.setBounds(60, 61, 237, 26);
+		lblDescripcion.setBounds(60, 67, 237, 26);
 		contentPane.add(lblDescripcion);
 		
 		precio_venta = new JTextField();
 		precio_venta.setText("0");
 		precio_venta.setColumns(10);
-		precio_venta.setBounds(60, 148, 237, 20);
+		precio_venta.setBounds(60, 160, 237, 20);
 		contentPane.add(precio_venta);
 		
 		JLabel lblPrecioDeVenta = new JLabel("Precio de Venta");
 		lblPrecioDeVenta.setForeground(Color.WHITE);
 		lblPrecioDeVenta.setFont(new Font("Segoe UI Semibold", Font.BOLD, 13));
-		lblPrecioDeVenta.setBounds(60, 117, 237, 26);
+		lblPrecioDeVenta.setBounds(60, 127, 237, 26);
 		contentPane.add(lblPrecioDeVenta);
 		
 		precio_costo = new JTextField();
 		precio_costo.setText("0");
 		precio_costo.setColumns(10);
-		precio_costo.setBounds(60, 204, 237, 20);
+		precio_costo.setBounds(60, 220, 237, 20);
 		contentPane.add(precio_costo);
 		
 		JLabel lblPrecioDeCosto = new JLabel("Precio de Costo");
 		lblPrecioDeCosto.setForeground(Color.WHITE);
 		lblPrecioDeCosto.setFont(new Font("Segoe UI Semibold", Font.BOLD, 13));
-		lblPrecioDeCosto.setBounds(60, 173, 237, 26);
+		lblPrecioDeCosto.setBounds(60, 187, 237, 26);
 		contentPane.add(lblPrecioDeCosto);
 		
 		JLabel lblGrupoDeArticulo = new JLabel("Categoria");
 		lblGrupoDeArticulo.setForeground(Color.WHITE);
 		lblGrupoDeArticulo.setFont(new Font("Segoe UI Semibold", Font.BOLD, 13));
-		lblGrupoDeArticulo.setBounds(60, 229, 237, 26);
+		lblGrupoDeArticulo.setBounds(60, 247, 237, 26);
 		contentPane.add(lblGrupoDeArticulo);
 		
 		stock = new JTextField();
 		stock.setText("0");
 		stock.setColumns(10);
-		stock.setBounds(60, 316, 237, 20);
+		stock.setBounds(60, 340, 237, 20);
 		contentPane.add(stock);
 		
 		JLabel lblStock = new JLabel("Stock");
 		lblStock.setForeground(Color.WHITE);
 		lblStock.setFont(new Font("Segoe UI Semibold", Font.BOLD, 13));
-		lblStock.setBounds(60, 285, 237, 26);
+		lblStock.setBounds(60, 307, 237, 26);
 		contentPane.add(lblStock);
 		
 		categoria = new JComboBox();
-		categoria.setBounds(60, 260, 237, 20);
+		categoria.setBounds(60, 280, 237, 20);
 		contentPane.add(categoria);
 		
 		
@@ -152,8 +153,19 @@ public class ArticuloNuevo extends JFrame {
 		});
 		btnNewButton.setText("Guardar Articulo");
 		btnNewButton.setFont(new Font("Segoe UI Semibold", Font.BOLD, 14));
-		btnNewButton.setBounds(60, 341, 237, 41);
+		btnNewButton.setBounds(60, 427, 237, 41);
 		contentPane.add(btnNewButton);
+		
+		JLabel lblObservacion = new JLabel("Observacion");
+		lblObservacion.setForeground(Color.WHITE);
+		lblObservacion.setFont(new Font("Segoe UI Semibold", Font.BOLD, 13));
+		lblObservacion.setBounds(60, 367, 237, 26);
+		contentPane.add(lblObservacion);
+		
+		observacion = new JTextField();
+		observacion.setColumns(10);
+		observacion.setBounds(60, 400, 237, 20);
+		contentPane.add(observacion);
 		
 		iniciarTodo();
 	}
@@ -205,9 +217,11 @@ public class ArticuloNuevo extends JFrame {
 							JOptionPane.showMessageDialog(null, "Ingrese un stock valido");
 						}else {
 							Articulo c = new Articulo();
+							
 							double Precio_venta = Double.valueOf(precio_venta.getText());							
 							double Precio_costo= Double.valueOf(precio_costo.getText());
 							double Stock= Double.valueOf(stock.getText());
+							String Observacion = observacion.getText();
 							
 							c.setCodigo(Articulo);
 							c.setDescripcion(Descripcion);
@@ -215,19 +229,16 @@ public class ArticuloNuevo extends JFrame {
 							c.setCosto(Precio_costo);
 							c.setStock(Stock);
 							c.setPrecio(Precio_venta);
+							c.setObservacion(Observacion);
 							
 							con.conectar();
 							con.guardarArticulo(c);
 							con.cerrarConexion();
 							
-							JOptionPane.showMessageDialog(null, "Se guardó exitosamente el articulo "+Articulo);
-							codigo.setText("");
-							descripcion.setText("");
-							precio_venta.setText("");
-							precio_costo.setText("");
-							stock.setText("");
+							JOptionPane.showMessageDialog(null, "Se guardó exitosamente el articulo "+Descripcion);
+							a.iniciarArticulos();
+							this.dispose();
 							
-							p.iniciarArticulos();
 							
 						}
 					}
@@ -255,5 +266,4 @@ public class ArticuloNuevo extends JFrame {
 		
 		
 	}
-
 }

@@ -4,6 +4,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import java.awt.Color;
+import java.awt.Dimension;
+
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
@@ -12,12 +14,16 @@ import javax.swing.JButton;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JSeparator;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.awt.event.ActionEvent;
 import java.awt.Font;
+import java.awt.Toolkit;
 
 public class Articulos extends JFrame {
 
@@ -102,6 +108,12 @@ public class Articulos extends JFrame {
 		panel.setLayout(null);
 		
 		txtBuscarArticulo = new JTextField();
+		txtBuscarArticulo.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+				iniciarArticulos();
+			}
+		});
 		txtBuscarArticulo.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		txtBuscarArticulo.setBounds(10, 10, 1224, 47);
 		panel.add(txtBuscarArticulo);
@@ -137,19 +149,47 @@ public class Articulos extends JFrame {
 		panel_1.add(btnNewButton);
 		
 		JButton btnModificarArticulo = new JButton("Modificar Articulo");
+		btnModificarArticulo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				modificarArticulo();
+			}
+		});
+		
 		btnModificarArticulo.setBounds(512, 11, 218, 46);
 		panel_1.add(btnModificarArticulo);
 		
 		JButton btnEliminarArticulo = new JButton("Eliminar Articulo");
+		btnEliminarArticulo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				eliminarArticulo();
+			}
+		});
 		btnEliminarArticulo.setBounds(877, 11, 218, 46);
 		panel_1.add(btnEliminarArticulo);
 		
 		iniciarTodo();
-	}
-	
+		
+		}
+		
+	public void modificarArticulo() {
+			if(tabla_articulos.getSelectedRow()<0) {
+				JOptionPane.showMessageDialog(null, "Debe seleccionar un articulo antes");
+			}else {
+				
+				String codigo = tabla_articulos.getValueAt(tabla_articulos.getSelectedRow(), 0).toString();
+				
+				con.conectar();
+				Articulo art = con.getArticulo(codigo);
+				con.cerrarConexion();
+				
+				ArticuloModificar a = new ArticuloModificar(this, art);
+				a.setVisible(true);
+			}
+		}
 	
 	public void iniciarTodo() {
 		iniciarArticulos();
+		centrarPantalla();
 	}
 	
 	public void articuloNuevo() {
@@ -165,7 +205,27 @@ public class Articulos extends JFrame {
         }
     }
 	
+	public void eliminarArticulo() {
+		if(tabla_articulos.getSelectedRow()<0) {
+			JOptionPane.showMessageDialog(null, "Tiene que seleccionar un articulo primero.");
+		}else {
+			int seleccion = JOptionPane.showConfirmDialog(null, "¿Esta seguro que desea eliminar este articulo?");
+			if(seleccion==0) {
+				eliminarArticuloSeleccionado();
+			}
+		}
+	}
 	
+	public void eliminarArticuloSeleccionado() {
+		String articulo = tabla_articulos.getValueAt(tabla_articulos.getSelectedRow(), 0).toString();
+		
+		con.conectar();
+		con.eliminarArticulo(articulo);
+		con.cerrarConexion();
+		
+		JOptionPane.showMessageDialog(null, "Articulo eliminado exitosamente");
+		iniciarArticulos();		
+	}
 	
 	public void iniciarArticulos() {
 		modelo_articulos = new DefaultTableModel();		
@@ -191,5 +251,10 @@ public class Articulos extends JFrame {
 		tabla_articulos.setModel(modelo_articulos);
 	}
 	
+	public void centrarPantalla() {
+		Toolkit toolkit =  getToolkit();
+		Dimension size = toolkit.getScreenSize();
+		setLocation(size.width/2 - getWidth()/2, size.height/2 - getHeight()/2);
+	}
 	
 }
