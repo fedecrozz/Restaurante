@@ -485,7 +485,7 @@ public class Principal extends JFrame {
 
 	public void iniciarTodo() {		
 		centrar();
-		setearApariencia();
+		//setearApariencia();
 		iniciarMesas();
 	}
 	

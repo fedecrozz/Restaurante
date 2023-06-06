@@ -3,6 +3,8 @@ public class ArticuloMesa {
 	private int mesa_numero,item_numero;
 	private String hora, articulo_codigo,articulo_descripcion,observacion;
 	private double cantidad, precio, total;
+	
+	
 	public int getMesa_numero() {
 		return mesa_numero;
 	}

@@ -486,6 +486,24 @@ public class Conector {
 		return p;
 	}
 	
+	public String getMesero(int Mesa_numero) {		
+		ResultSet result = null;
+		String mesero = null;
+		try {			
+			PreparedStatement st = conexion.prepareStatement("select mesero_nombre from MESAS where numero = "+Mesa_numero+"");
+			result = st.executeQuery();			
+			
+            
+            mesero= result.getString("mesero_nombre");
+            
+		} catch (SQLException ex) {
+			System.out.println(ex);
+		}
+		return mesero;
+	}
+	
+	
+	
 	public MesaClase getMesa(int Mesa) {		
 		ResultSet result = null;
 		MesaClase p = null;
@@ -607,6 +625,51 @@ public class Conector {
 		
 		
 	}
+	
+	public ArticuloMesa getArticulosMesaCodigo(int numeroMesa, int codigo){
+		
+		ResultSet result = null;
+		ArticuloMesa a = null;
+		try {
+    		String query = "select * from ARTICULOS_MESA where mesa_numero ='"+numeroMesa+"' AND articulo_codigo = '"+codigo+"'";
+    		
+            PreparedStatement st = conexion.prepareStatement(query);
+            result = st.executeQuery();
+            
+            while (result.next()) {
+            	a = new ArticuloMesa();
+                int mesa_numero = result.getInt("mesa_numero");
+                String hora= result.getString("hora");
+                String articulo_codigo= result.getString("articulo_codigo");
+                String articulo_descripcion= result.getString("articulo_descripcion");
+                double cantidad= result.getDouble("cantidad");  
+                double precio = result.getDouble("precio");
+                double total= result.getDouble("total");
+                String observacion= result.getString("observacion");
+                int item_numero = result.getInt("item_numero");
+                
+                a.setMesa_numero(mesa_numero);
+                a.setArticulo_codigo(articulo_codigo);
+                a.setArticulo_descripcion(articulo_descripcion);
+                a.setHora(hora);
+                a.setCantidad(cantidad);
+                a.setPrecio(precio);
+                a.setTotal(total);
+                a.setObservacion(observacion);
+                a.setItem_numero(item_numero);
+                
+            	}
+            	
+        }catch (SQLException e) {
+        	System.out.println(e);
+            }
+       
+        return a;
+		
+		
+	}
+	
+	
 	
 	public ArrayList<MesaClase> getMesaClase(){
 		ArrayList<MesaClase> Mesas = new ArrayList<MesaClase>();
@@ -910,6 +973,26 @@ public class Conector {
 		
 		return total;
 	}
+	
+	public void modificarArticuloMesa(ArticuloMesa c) {
+		try {
+			
+			String query = "update ARTICULOS_MESA set "+			 
+					"cantidad = '"+c.getCantidad()+"',"+
+					"total = '"+c.getTotal()+"' "+
+					"WHERE mesa_numero = '"+c.getMesa_numero()+"' AND articulo_codigo = '"+c.getArticulo_codigo()+"'";
+					
+					
+			 PreparedStatement ps = conexion.prepareStatement(query);
+			 
+			 			 
+			 
+				    ps.executeUpdate();
+		} catch (SQLException e) {
+			System.out.println(e);
+		}
+	}
+	//modificarArticuloMesa
 	
 }
 

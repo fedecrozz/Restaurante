@@ -13,6 +13,8 @@ import java.awt.Dimension;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JSeparator;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.JButton;
 
 public class Menu extends JFrame {
@@ -107,7 +109,7 @@ public class Menu extends JFrame {
 				m.setVisible(true);
 			}
 		});
-		btnNewButton.setBounds(560, 73, 144, 73);
+		btnNewButton.setBounds(618, 183, 144, 73);
 		contentPane.add(btnNewButton);
 		
 		JButton btnNewButton_1 = new JButton("Articulos");
@@ -117,7 +119,7 @@ public class Menu extends JFrame {
 				a.setVisible(true);
 			}
 		});
-		btnNewButton_1.setBounds(560, 219, 144, 73);
+		btnNewButton_1.setBounds(464, 267, 144, 73);
 		contentPane.add(btnNewButton_1);
 		
 		JButton btnNewButton_2 = new JButton("Categorias");
@@ -127,7 +129,7 @@ public class Menu extends JFrame {
 				c.setVisible(true);
 			}
 		});
-		btnNewButton_2.setBounds(560, 365, 144, 73);
+		btnNewButton_2.setBounds(618, 267, 144, 73);
 		contentPane.add(btnNewButton_2);
 		
 		JButton btnNewButton_3 = new JButton("Meseros");
@@ -137,7 +139,7 @@ public class Menu extends JFrame {
 				m.setVisible(true);
 			}
 		});
-		btnNewButton_3.setBounds(560, 511, 144, 73);
+		btnNewButton_3.setBounds(772, 267, 144, 73);
 		contentPane.add(btnNewButton_3);
 		
 		iniciarTodo();
@@ -147,6 +149,16 @@ public class Menu extends JFrame {
 	public void iniciarTodo() {
 		maximizar();
 		centrar();
+		//setearApariencia();
+	}
+	
+	public void setearApariencia() {
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+				| UnsupportedLookAndFeelException e2) {
+			e2.printStackTrace();
+		}
 	}
 	
 	public void centrar() {

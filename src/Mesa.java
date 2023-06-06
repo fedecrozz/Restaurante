@@ -51,6 +51,11 @@ import javax.swing.table.DefaultTableModel;
 
 import java.awt.SystemColor;
 import javax.swing.JTextField;
+import javax.swing.JComboBox;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 
 public class Mesa extends JFrame {
 
@@ -69,6 +74,15 @@ public class Mesa extends JFrame {
 //	private static GUI gui = new GUI();
 	private static JLabel saldo_final;
 	private static Principal principal;
+	private static JLabel mesa;
+	private static JLabel cuenta;
+	private static JLabel estado;
+	private static JLabel subtotal;
+	private static JLabel descuento;
+	private static JLabel recargo;
+	private static JComboBox mesero;
+	private MesaClase MesaClase;
+	
 
 	/**
 	 * Launch the application.
@@ -145,33 +159,19 @@ public class Mesa extends JFrame {
 		lblNewLabel_2_2.setBounds(721, 621, 105, 22);
 		contentPane.add(lblNewLabel_2_2);
 		
-		JLabel lblNewLabel_1_3 = new JLabel("$0.00");
-		lblNewLabel_1_3.setHorizontalAlignment(SwingConstants.RIGHT);
-		lblNewLabel_1_3.setForeground(Color.WHITE);
-		lblNewLabel_1_3.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-		lblNewLabel_1_3.setBounds(606, 639, 105, 31);
-		contentPane.add(lblNewLabel_1_3);
+		descuento = new JLabel("$0.00");
+		descuento.setHorizontalAlignment(SwingConstants.RIGHT);
+		descuento.setForeground(Color.WHITE);
+		descuento.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+		descuento.setBounds(836, 639, 105, 31);
+		contentPane.add(descuento);
 		
-		JLabel lblNewLabel_2_3 = new JLabel("Seleccionado:");
-		lblNewLabel_2_3.setHorizontalAlignment(SwingConstants.RIGHT);
-		lblNewLabel_2_3.setForeground(Color.WHITE);
-		lblNewLabel_2_3.setFont(new Font("Segoe UI", Font.PLAIN, 16));
-		lblNewLabel_2_3.setBounds(606, 621, 105, 22);
-		contentPane.add(lblNewLabel_2_3);
-		
-		JLabel lblNewLabel_1_3_1 = new JLabel("$0.00");
-		lblNewLabel_1_3_1.setHorizontalAlignment(SwingConstants.RIGHT);
-		lblNewLabel_1_3_1.setForeground(Color.WHITE);
-		lblNewLabel_1_3_1.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-		lblNewLabel_1_3_1.setBounds(836, 639, 105, 31);
-		contentPane.add(lblNewLabel_1_3_1);
-		
-		JLabel lblNewLabel_1_3_2 = new JLabel("$0.00");
-		lblNewLabel_1_3_2.setHorizontalAlignment(SwingConstants.RIGHT);
-		lblNewLabel_1_3_2.setForeground(Color.WHITE);
-		lblNewLabel_1_3_2.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-		lblNewLabel_1_3_2.setBounds(721, 639, 105, 31);
-		contentPane.add(lblNewLabel_1_3_2);
+		subtotal = new JLabel("$0.00");
+		subtotal.setHorizontalAlignment(SwingConstants.RIGHT);
+		subtotal.setForeground(Color.WHITE);
+		subtotal.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+		subtotal.setBounds(721, 639, 105, 31);
+		contentPane.add(subtotal);
 		
 		JLabel lblNewLabel_2_1_1 = new JLabel("Recargo:");
 		lblNewLabel_2_1_1.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -180,12 +180,12 @@ public class Mesa extends JFrame {
 		lblNewLabel_2_1_1.setBounds(951, 621, 105, 22);
 		contentPane.add(lblNewLabel_2_1_1);
 		
-		JLabel lblNewLabel_1_3_1_1 = new JLabel("$0.00");
-		lblNewLabel_1_3_1_1.setHorizontalAlignment(SwingConstants.RIGHT);
-		lblNewLabel_1_3_1_1.setForeground(Color.WHITE);
-		lblNewLabel_1_3_1_1.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-		lblNewLabel_1_3_1_1.setBounds(951, 639, 105, 31);
-		contentPane.add(lblNewLabel_1_3_1_1);
+		recargo = new JLabel("$0.00");
+		recargo.setHorizontalAlignment(SwingConstants.RIGHT);
+		recargo.setForeground(Color.WHITE);
+		recargo.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+		recargo.setBounds(951, 639, 105, 31);
+		contentPane.add(recargo);
 		
 		JPanel panel_2 = new JPanel();
 		panel_2.setBounds(10, 11, 1244, 55);
@@ -217,7 +217,7 @@ public class Mesa extends JFrame {
 		btnCancelar.setBounds(944, 7, 140, 41);
 		panel_2.add(btnCancelar);
 		
-		JButton btnNewButton = new JButton("Confirmar pedido");
+		JButton btnNewButton = new JButton("Cerrar cuenta");
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
@@ -229,37 +229,26 @@ public class Mesa extends JFrame {
 		btnNewButton.setBounds(1094, 7, 140, 41);
 		panel_2.add(btnNewButton);
 		
-		JButton btnCerrarCuenta = new JButton("Cerrar Cuenta");
-		btnCerrarCuenta.setBounds(516, 7, 127, 41);
-		panel_2.add(btnCerrarCuenta);
+		mesa = new JLabel("Mesa: 1");
+		mesa.setHorizontalAlignment(SwingConstants.LEFT);
+		mesa.setForeground(Color.WHITE);
+		mesa.setFont(new Font("Segoe UI Semibold", Font.BOLD, 14));
+		mesa.setBounds(154, 62, 115, 31);
+		contentPane.add(mesa);
 		
-		JLabel lblMesa = new JLabel("Mesa: 1");
-		lblMesa.setHorizontalAlignment(SwingConstants.LEFT);
-		lblMesa.setForeground(Color.WHITE);
-		lblMesa.setFont(new Font("Segoe UI Semibold", Font.BOLD, 14));
-		lblMesa.setBounds(154, 62, 115, 31);
-		contentPane.add(lblMesa);
+		estado = new JLabel("Estado: Disponible");
+		estado.setHorizontalAlignment(SwingConstants.LEFT);
+		estado.setForeground(Color.WHITE);
+		estado.setFont(new Font("Segoe UI Semibold", Font.BOLD, 14));
+		estado.setBounds(692, 62, 131, 31);
+		contentPane.add(estado);
 		
-		JLabel lblEstadoDisponible = new JLabel("Estado: Disponible");
-		lblEstadoDisponible.setHorizontalAlignment(SwingConstants.LEFT);
-		lblEstadoDisponible.setForeground(Color.WHITE);
-		lblEstadoDisponible.setFont(new Font("Segoe UI Semibold", Font.BOLD, 14));
-		lblEstadoDisponible.setBounds(692, 62, 131, 31);
-		contentPane.add(lblEstadoDisponible);
-		
-		JLabel lblMeseroRodrigo = new JLabel("Mesero: Rodrigo");
-		lblMeseroRodrigo.setHorizontalAlignment(SwingConstants.LEFT);
-		lblMeseroRodrigo.setForeground(Color.WHITE);
-		lblMeseroRodrigo.setFont(new Font("Segoe UI Semibold", Font.BOLD, 14));
-		lblMeseroRodrigo.setBounds(977, 62, 131, 31);
-		contentPane.add(lblMeseroRodrigo);
-		
-		JLabel lblCuentaAbierta = new JLabel("Cuenta: Abierta");
-		lblCuentaAbierta.setHorizontalAlignment(SwingConstants.LEFT);
-		lblCuentaAbierta.setForeground(Color.WHITE);
-		lblCuentaAbierta.setFont(new Font("Segoe UI Semibold", Font.BOLD, 14));
-		lblCuentaAbierta.setBounds(423, 62, 115, 31);
-		contentPane.add(lblCuentaAbierta);
+		cuenta = new JLabel("Cuenta: Abierta");
+		cuenta.setHorizontalAlignment(SwingConstants.LEFT);
+		cuenta.setForeground(Color.WHITE);
+		cuenta.setFont(new Font("Segoe UI Semibold", Font.BOLD, 14));
+		cuenta.setBounds(423, 62, 115, 31);
+		contentPane.add(cuenta);
 		
 		JButton btnNewButton_1 = new JButton("-");
 		btnNewButton_1.setBounds(1187, 98, 67, 55);
@@ -289,28 +278,74 @@ public class Mesa extends JFrame {
 		table_2 = new JTable();
 		scrollPane_2.setViewportView(table_2);
 		
+		mesero = new JComboBox();
+		mesero.addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusLost(FocusEvent arg0) {
+				con.conectar();
+				con.ejecutarQuery("update MESAS set mesero_nombre = '"+mesero.getSelectedItem().toString()+"' where numero = '"+numeroMesa+"'");
+				con.cerrarConexion();
+			}
+		});
+		
+		mesero.setBounds(980, 67, 193, 25);
+		contentPane.add(mesero);
+		
+		JLabel lblMesero = new JLabel("Mesero");
+		lblMesero.setHorizontalAlignment(SwingConstants.LEFT);
+		lblMesero.setForeground(Color.WHITE);
+		lblMesero.setFont(new Font("Segoe UI Semibold", Font.BOLD, 14));
+		lblMesero.setBounds(924, 62, 115, 31);
+		contentPane.add(lblMesero);
+		
 		iniciarTodo();
 		
 		
 	}
 
-	public void iniciarTodo() {		
+	public void iniciarTodo() {	
+		con.conectar();
+    	articulosMesa = con.getArticulosMesa(numeroMesa);
+    	con.cerrarConexion();
+    	
 		centrar();
 		setearApariencia();
 		iniciarBotonesCategorias();
+		iniciarMesero();
 		iniciarMesa();
 		iniciarArticulosMesa(numeroMesa);
 	}
 	
+	
+	
+	public void iniciarMesero() {
+		con.conectar();
+		ArrayList<Mesero> meseros = con.getMeseros();
+		con.cerrarConexion();
+		
+		mesero.removeAllItems();
+		
+		for(int i = 0; i < meseros.size(); i++) {
+			mesero.addItem(meseros.get(i).getNombre());
+		}
+		con.conectar();
+		String Mesero = con.getMesero(numeroMesa);
+		con.cerrarConexion();
+		
+		this.mesero.setSelectedItem(Mesero);
+	}
+	
 	public void iniciarMesa() {
-		//mesa = numeroMesa
-		//Cuenta = cuenta
-		//estado = estado
-		//mesero = mesero
-		//descuento
-		//recargo
-		//total
-		//subtotal
+		con.conectar();
+		MesaClase m= con.getMesa(numeroMesa);
+		con.cerrarConexion();
+		
+		mesa.setText("Mesa: "+numeroMesa);
+		cuenta.setText("Cuenta: "+m.getCuenta().toUpperCase());
+		estado.setText("Estado: "+m.getEstado().toUpperCase());
+		descuento.setText("$"+quitarDecimal(""+m.getDescuento()));
+		recargo.setText("$"+quitarDecimal(""+m.getRecargo()));
+		subtotal.setText("$"+quitarDecimal(""+m.getSubtotal()));
 		
 	}
 	
@@ -423,53 +458,69 @@ public class Mesa extends JFrame {
     	
     }
     
-    public static void sumarArticulo(int codigo){
-    	
-    	con.conectar();
-    	ArrayList<ArticuloMesa> articulosMesas = con.getArticulosMesa(numeroMesa);
-    	con.cerrarConexion();
-    	
+    public static boolean existe(int codigo) {
+    	ArticuloMesa A = null;
     	boolean existe =false;
-    	int indice = 0;
-    	
-    	for(int i = 0; i<articulosMesas.size();i++) {
-    		ArticuloMesa a = articulosMesas.get(i);    		
-    		existe = existe || a.getArticulo_codigo().equals(codigo);
-    		if(existe) {
-    			indice = i;
-    		}
-    	}
-    	
-    	ArticuloMesa a = new ArticuloMesa();
-    	a.setMesa_numero(numeroMesa);
-    	a.setArticulo_codigo(""+codigo);    	
-    	a.setHora(getHora());
     	
     	con.conectar();
-    	a.setArticulo_descripcion(con.getArticulo(""+codigo).getDescripcion());
-    	double cantidad = 0;
-    	
-    	if(existe) {
-    		System.out.println("YA EXISTE");
-    		cantidad = articulosMesas.get(indice).getCantidad();
-    		cantidad+=1;
-    		a.setCantidad(cantidad);
-    	}else {
-    		cantidad=1;
-    		a.setCantidad(1);
-    	}    	
-    	a.setPrecio(con.getArticulo(""+codigo).getPrecio());
-    	a.setTotal(con.getArticulo(""+codigo).getPrecio()*cantidad);
-    	con.guardarMesa(numeroMesa,a);
+    	articulosMesa = con.getArticulosMesa(numeroMesa);
     	con.cerrarConexion();
     	
-    	iniciarArticulosMesa(numeroMesa);    
-    	if(table.getRowCount()>0) {
-    		con.conectar();
-    		con.ejecutarQuery("update MESAS set estado = 'ocupada' where numero = "+numeroMesa);
-    		con.cerrarConexion();
+    	for(int i = 0; i<articulosMesa.size();i++) {
+    		A = articulosMesa.get(i); 
+    		existe = existe || A.getArticulo_codigo().equals(String.valueOf(codigo));
     	}
-    	principal.iniciarMesas();
+    	
+    	return existe;
+    	
+    }
+    
+    public static void sumarArticulo(int codigo){
+    	if(!existe(codigo)) {
+    		ArticuloMesa a = new ArticuloMesa();
+			a.setMesa_numero(numeroMesa);
+			a.setArticulo_codigo(""+codigo);    	
+			a.setHora(getHora());  
+			
+			con.conectar();
+			a.setArticulo_descripcion(con.getArticulo(""+codigo).getDescripcion());
+			a.setCantidad(1);
+			a.setPrecio(con.getArticulo(""+codigo).getPrecio());
+			a.setTotal(con.getArticulo(""+codigo).getPrecio());
+			con.cerrarConexion();
+			
+			con.conectar();
+			con.guardarMesa(numeroMesa,a);
+			con.cerrarConexion();
+			iniciarArticulosMesa(numeroMesa);
+    	}else {
+    		
+    		con.conectar();
+    		ArticuloMesa A = con.getArticulosMesaCodigo(numeroMesa, codigo);
+    		con.cerrarConexion();
+    		
+    		A.setCantidad(A.getCantidad()+1);
+			A.setTotal(A.getPrecio()*A.getCantidad()); 
+			
+			con.conectar();
+			con.modificarArticuloMesa(A);
+			con.cerrarConexion();
+			iniciarArticulosMesa(numeroMesa);
+    	}
+    	
+		if(table.getRowCount()>0) {
+			con.conectar();
+			con.ejecutarQuery("update MESAS set estado = 'ocupada' where numero = "+numeroMesa);
+			con.ejecutarQuery("update MESAS set cuenta = 'abierta' where numero = "+numeroMesa);
+			con.ejecutarQuery("update MESAS set mesero_nombre = '"+mesero.getSelectedItem().toString()+"' where numero = "+numeroMesa);
+			con.cerrarConexion();
+			cuenta.setText("Cuenta: ABIERTA");
+			estado.setText("Estado: OCUPADA");
+		}
+		
+		iniciarArticulosMesa(numeroMesa);    
+		principal.iniciarMesas();
+    	
     	
     }
     
