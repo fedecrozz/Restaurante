@@ -131,6 +131,12 @@ public class Menu extends JFrame {
 		contentPane.add(btnNewButton_2);
 		
 		JButton btnNewButton_3 = new JButton("Meseros");
+		btnNewButton_3.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				Meseros m = new Meseros();
+				m.setVisible(true);
+			}
+		});
 		btnNewButton_3.setBounds(560, 511, 144, 73);
 		contentPane.add(btnNewButton_3);
 		

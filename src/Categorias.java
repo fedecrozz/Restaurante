@@ -110,6 +110,11 @@ public class Categorias extends JFrame {
 		panel_1.add(btnAgregarCategoria);
 		
 		JButton btnModificarArticulo = new JButton("Modificar Categoria");
+		btnModificarArticulo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				modificarCategoria();
+			}
+		});
 		btnModificarArticulo.setBounds(512, 11, 218, 46);
 		panel_1.add(btnModificarArticulo);
 		
@@ -140,6 +145,23 @@ public class Categorias extends JFrame {
 	public void iniciarTodo() {
 		centrarPantalla();
 		iniciarCategorias();
+	}
+	
+	public void modificarCategoria() {
+		if(tabla_categorias.getSelectedRow()<0) {
+			JOptionPane.showMessageDialog(null, "Debe seleccionar una categoria antes");
+		}else {
+			
+			String codigo = tabla_categorias.getValueAt(tabla_categorias.getSelectedRow(), 0).toString();
+			String nombre = JOptionPane.showInputDialog("Ingrese el nuevo nombre de la categoria");
+			
+			con.conectar();
+			con.modificarCategoria(codigo,nombre.toUpperCase());
+			con.cerrarConexion();
+			
+			JOptionPane.showMessageDialog(null, "Categoria modificada correctamente");
+			iniciarCategorias();
+		}
 	}
 	
 	public void iniciarCategorias() {

@@ -67,9 +67,12 @@ public class Conector {
 	public void guardarCategoria(String Descripcion) {
 		try {
 			PreparedStatement st = conexion.prepareStatement("insert into CATEGORIAS (codigo, descripcion) values (?,?)");
-			String ultimo = getCodigoUltimaCategoria();
+			String ultimo = getCodigoUltimaCategoria();			
 			
-            
+			if(ultimo.isEmpty()) {
+            	ultimo = "0"; 
+            }
+			
             st.setString(1,String.valueOf(Integer.valueOf(ultimo)+1));
             st.setString(2,Descripcion);
             
@@ -99,6 +102,25 @@ public class Conector {
 		return codigo;
 	}
 	
+	public String getCodigoUltimoMesero() {
+	
+		
+		ResultSet result = null;
+		String codigo = "";
+		
+		
+		try {			
+			PreparedStatement st = conexion.prepareStatement("select * from MESEROS order by codigo DESC limit 1");
+			result = st.executeQuery();			
+			
+            codigo= result.getString("codigo");
+            
+		} catch (SQLException ex) {
+			System.out.println(ex);
+		}
+		return codigo;
+	}
+	
 	
 	public boolean existeArticulo(String nombre) {
 		ResultSet result = null;
@@ -118,11 +140,30 @@ public class Conector {
 		return ret;
 	}
 	
+	public boolean existeMesero(String nombre) {
+		ResultSet result = null;
+		boolean ret = false;
+		
+		try {
+			PreparedStatement st = conexion.prepareStatement("select nombre from MESEROS where nombre = '"+nombre+"'");
+			result = st.executeQuery();			
+			String Nombre= result.getString("nombre");
+            
+            if(Nombre.equals(nombre)) {
+            	ret=true;
+            }
+            
+		} catch (Exception e) {}
+				
+		return ret;
+	}
+	
 	public String getCodigoUltimoArticulo() {
 		
 		
 		ResultSet result = null;
 		String codigo = "";
+		String ultimo ="";
 		
 		
 		try {			
@@ -157,6 +198,27 @@ public class Conector {
 		}
 	}
 
+	public void guardarMesero(String nombre) {
+		try {
+			PreparedStatement st = conexion.prepareStatement("insert into MESEROS (codigo,nombre) values (?,?)");
+			String ultimo = getCodigoUltimoMesero();
+			
+			if(ultimo.isEmpty()) {
+            	ultimo = "0"; 
+            }
+            
+            st.setString(1,String.valueOf(Integer.valueOf(ultimo)+1));
+            st.setString(2,nombre);
+            
+            st.execute();
+            
+		} catch (SQLException e) {
+			System.out.println(e);
+		}
+	}
+	
+	
+	
 	public ArrayList<Articulo> getArticulos(){
 		ArrayList<Articulo> articulos= new ArrayList<Articulo>();
 		ResultSet result = null;
@@ -195,6 +257,35 @@ public class Conector {
        
         return articulos;
 	}
+	
+	public ArrayList<Mesero> getMeseros(){
+		ArrayList<Mesero> meseros= new ArrayList<Mesero>();
+		ResultSet result = null;
+		
+        try {
+        		
+            PreparedStatement st = conexion.prepareStatement("select * from MESEROS order by nombre ASC");
+            result = st.executeQuery();
+            
+            while (result.next()) {
+            	Mesero m = new Mesero();
+                String codigo= result.getString("codigo");
+                String nombre= result.getString("nombre");
+                
+                m.setCodigo(codigo);
+                m.setNombre(nombre);
+                meseros.add(m);
+                
+            	}
+            
+        }catch (SQLException e) {
+				System.out.println(e);
+		}
+       
+        return meseros;
+	}
+	
+	
 	
 	public ArrayList<Articulo> getArticulos(String Categoria){
 		ArrayList<Articulo> articulos= new ArrayList<Articulo>();
@@ -394,6 +485,38 @@ public class Conector {
 		}
 		return p;
 	}
+	
+	public MesaClase getMesa(int Mesa) {		
+		ResultSet result = null;
+		MesaClase p = null;
+		try {			
+			PreparedStatement st = conexion.prepareStatement("select * from MESAS where numero = '"+Mesa+"'");
+			result = st.executeQuery();			
+			
+            p = new MesaClase();
+            int numero= result.getInt("numero");
+            String cuenta= result.getString("cuenta");
+            String estado= result.getString("estado");
+            String mesero_nombre= result.getString("mesero_nombre");
+            double total= result.getDouble("total");
+            double descuento= result.getDouble("descuento");
+            double recargo= result.getDouble("recargo");
+            String nota= result.getString("nota");
+            
+            p.setNumero(numero);
+            p.setCuenta(cuenta);
+            p.setEstado(estado);
+            p.setMesero(mesero_nombre);
+            p.setTotal(total);
+            p.setDescuento(descuento);
+            p.setRecargo(recargo);
+            p.setObservacion(nota);
+        	
+		} catch (SQLException ex) {
+			System.out.println(ex);
+		}
+		return p;
+	}
 
 	public ArrayList<ArticuloMesa> getArticulosMesa(){
 		ArrayList<ArticuloMesa> articulosMesa = new ArrayList<ArticuloMesa>();
@@ -485,6 +608,53 @@ public class Conector {
 		
 	}
 	
+	public ArrayList<MesaClase> getMesaClase(){
+		ArrayList<MesaClase> Mesas = new ArrayList<MesaClase>();
+		ResultSet result = null;
+		MesaClase a = null;
+		try {
+    		
+            PreparedStatement st = conexion.prepareStatement("select * from MESAS order by numero ASC");
+            result = st.executeQuery();
+            
+            while (result.next()) {
+            	a = new MesaClase();
+            	
+            	
+                int numero = result.getInt("numero");
+                String cuenta= result.getString("cuenta");
+                String estado= result.getString("estado");
+                String mesero_nombre= result.getString("mesero_nombre");
+                double total= result.getDouble("total");  
+                double descuento = result.getDouble("descuento");
+                double recargo= result.getDouble("recargo");
+                String nota= result.getString("nota");
+                
+                a.setNumero(numero);
+                a.setCuenta(cuenta);
+                a.setEstado(estado);
+                a.setMesero(mesero_nombre);
+                a.setTotal(total);
+                a.setDescuento(descuento);
+                a.setRecargo(recargo);                
+                a.setObservacion(nota);
+                
+                
+                Mesas.add(a);
+            	}
+            	
+        }catch (SQLException e) {
+        	System.out.println(e);
+            }
+       
+        return Mesas;
+		
+		
+	}
+	
+	
+	
+	
 	public int getNumeroUltima_Venta() {
 		
 		int numero = 0;
@@ -514,6 +684,16 @@ public class Conector {
 			return numero;		
 		
 	}
+	
+	public void ejecutarQuery(String query) {
+		try {
+            PreparedStatement ps = conexion.prepareStatement(query);
+			ps.executeUpdate();
+        }catch (SQLException e) {
+				System.out.println(e);
+		}		
+	}
+	
 	
 	public double ejecutarQuery(String query,String get) {
 		double numero = 0;
@@ -564,6 +744,16 @@ public class Conector {
 			System.out.println(e);
 		}
 	}
+	
+	public void eliminarMesero(String nombre) {
+		try {
+			 PreparedStatement ps = conexion.prepareStatement("delete from MESEROS where nombre='"+nombre+"'");
+			 ps.executeUpdate();
+		} catch (SQLException e) {
+			System.out.println(e);
+		}
+	}
+	
 	
 	public void eliminarArticulosVenta(int numero) {
 		try {
@@ -642,6 +832,63 @@ public class Conector {
 			 			 
 			 
 				    ps.executeUpdate();
+		} catch (SQLException e) {
+			System.out.println(e);
+		}
+	}
+	
+	public void modificarMesa(MesaClase c) {
+		try {
+			
+			String query = "update MESAS set "+			 
+					"cuenta = '"+c.getCuenta()+"',"+
+					"estado = '"+c.getEstado()+"',"+
+					"mesero_nombre= '"+c.getMesero()+"',"+
+					"total = '"+c.getTotal()+"',"+
+					"subtotal = '"+c.getSubtotal()+"',"+
+					"descuento = '"+c.getDescuento()+"',"+
+					"recargo = '"+c.getRecargo()+"',"+
+					"nota = '"+c.getObservacion()+"' "+
+					"WHERE numero = '"+c.getNumero()+"'";
+					
+					
+			 PreparedStatement ps = conexion.prepareStatement(query);
+			 
+			 			 
+			 
+				    ps.executeUpdate();
+		} catch (SQLException e) {
+			System.out.println(e);
+		}
+	}
+	
+	public void modificarMesero(String codigo, String nombre) {
+		try {
+			
+			String query = "update MESEROS set "+
+					"nombre = '"+nombre+"' "+
+					"WHERE codigo = '"+codigo+"'";
+					
+			 PreparedStatement ps = conexion.prepareStatement(query);
+
+			 ps.executeUpdate();
+			 
+		} catch (SQLException e) {
+			System.out.println(e);
+		}
+	}
+	
+	public void modificarCategoria(String codigo, String nombre) {
+		try {
+			
+			String query = "update CATEGORIAS set "+
+					"descripcion = '"+nombre+"' "+
+					"WHERE codigo = '"+codigo+"'";
+					
+			 PreparedStatement ps = conexion.prepareStatement(query);
+
+			 ps.executeUpdate();
+			 
 		} catch (SQLException e) {
 			System.out.println(e);
 		}

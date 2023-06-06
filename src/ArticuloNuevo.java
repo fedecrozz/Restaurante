@@ -188,6 +188,10 @@ public class ArticuloNuevo extends JFrame {
 		String ultimo = con.getCodigoUltimoArticulo();
 		con.cerrarConexion();
 		
+
+		if(ultimo.isEmpty()) {
+        	ultimo = "0"; 
+        }
 		
 		codigo.setText(String.valueOf(Integer.valueOf(ultimo)+1));
 	}
@@ -236,7 +240,7 @@ public class ArticuloNuevo extends JFrame {
 							con.guardarArticulo(c);
 							con.cerrarConexion();
 							
-							JOptionPane.showMessageDialog(null, "Se guard� exitosamente el articulo "+Descripcion);
+							JOptionPane.showMessageDialog(null, "Se guardo exitosamente el articulo "+Descripcion);
 							a.iniciarArticulos();
 							this.dispose();
 							

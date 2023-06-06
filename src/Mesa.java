@@ -32,6 +32,7 @@ import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
 import javax.swing.JScrollPane;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -67,6 +68,7 @@ public class Mesa extends JFrame {
 	private JScrollPane scrollPane;
 //	private static GUI gui = new GUI();
 	private static JLabel saldo_final;
+	private static Principal principal;
 
 	/**
 	 * Launch the application.
@@ -75,7 +77,7 @@ public class Mesa extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Mesa frame = new Mesa(0);
+					Mesa frame = new Mesa(null,0);
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -88,7 +90,8 @@ public class Mesa extends JFrame {
 	 * Create the frame.
 	 * @param NumeroMesa 
 	 */
-	public Mesa(int NumeroMesa) {
+	public Mesa(Principal p,int NumeroMesa) {
+		principal = p;
 		numeroMesa = NumeroMesa;
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -206,6 +209,11 @@ public class Mesa extends JFrame {
 		panel_2.add(btnCambiarMesa);
 		
 		JButton btnCancelar = new JButton("Cancelar");
+		btnCancelar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				cancelarMesa();
+			}
+		});
 		btnCancelar.setBounds(944, 7, 140, 41);
 		panel_2.add(btnCancelar);
 		
@@ -290,7 +298,50 @@ public class Mesa extends JFrame {
 		centrar();
 		setearApariencia();
 		iniciarBotonesCategorias();
+		iniciarMesa();
 		iniciarArticulosMesa(numeroMesa);
+	}
+	
+	public void iniciarMesa() {
+		//mesa = numeroMesa
+		//Cuenta = cuenta
+		//estado = estado
+		//mesero = mesero
+		//descuento
+		//recargo
+		//total
+		//subtotal
+		
+	}
+	
+	public void cancelarMesa() {
+		int input =  JOptionPane.showConfirmDialog(null, "Esta seguro que desea cancelar la mesa?");
+		if (input==0) {
+			
+			con.conectar();			
+			//establece la mesa en disponible (update)			
+			con.ejecutarQuery("update MESAS set estado = 'disponible' WHERE numero = "+numeroMesa);			
+			//establece la cuenta en cerrada
+			con.ejecutarQuery("update MESAS set cuenta = 'cerrada' WHERE numero = "+numeroMesa);
+			//vacia el nombre del mesero
+			con.ejecutarQuery("update MESAS set mesero_nombre = '' WHERE numero = "+numeroMesa);
+			//total = 0
+			con.ejecutarQuery("update MESAS set total = 0 WHERE numero = "+numeroMesa);
+			//descuento = 0
+			con.ejecutarQuery("update MESAS set descuento = 0 WHERE numero = "+numeroMesa);
+			//recargo = 0
+			con.ejecutarQuery("update MESAS set recargo = 0 WHERE numero = "+numeroMesa);
+			//vacia la nota
+			con.ejecutarQuery("update MESAS set nota = 0 WHERE numero = "+numeroMesa);
+			//limpia el array articulos_mesa
+			con.ejecutarQuery("delete from ARTICULOS_MESA WHERE mesa_numero = "+numeroMesa);
+			
+			con.cerrarConexion();
+			//inicia mesas
+			this.principal.iniciarMesas();
+			//dispose
+			this.dispose();
+		}
 	}
 	
 	public void iniciarBotonesCategorias() {
@@ -326,7 +377,7 @@ public class Mesa extends JFrame {
 	}
 	
 	private static JButton createButton(String text, ActionListener actionListener) {
-		// M�todo para crear un bot�n con un texto y acci�n espec�ficos
+		// Metodo para crear un boton con un texto y accion especificos
         JButton button = new JButton(text);
         button.addActionListener(actionListener);
         return button;
@@ -334,7 +385,7 @@ public class Mesa extends JFrame {
         
     @FunctionalInterface
     private interface MyActionListener extends ActionListener {
-    	// Interfaz funcional gen�rica para representar ActionListener
+    	// Interfaz funcional generica para representar ActionListener
         @Override
         void actionPerformed(ActionEvent e);
     }
@@ -391,14 +442,11 @@ public class Mesa extends JFrame {
     	
     	ArticuloMesa a = new ArticuloMesa();
     	a.setMesa_numero(numeroMesa);
-    	a.setArticulo_codigo(""+codigo);
-    	
+    	a.setArticulo_codigo(""+codigo);    	
     	a.setHora(getHora());
     	
     	con.conectar();
     	a.setArticulo_descripcion(con.getArticulo(""+codigo).getDescripcion());
-    	con.cerrarConexion();
-    	
     	double cantidad = 0;
     	
     	if(existe) {
@@ -409,21 +457,19 @@ public class Mesa extends JFrame {
     	}else {
     		cantidad=1;
     		a.setCantidad(1);
-    	}
-    	
-    	con.conectar();
+    	}    	
     	a.setPrecio(con.getArticulo(""+codigo).getPrecio());
-    	con.cerrarConexion();
-    	
-    	con.conectar();
     	a.setTotal(con.getArticulo(""+codigo).getPrecio()*cantidad);
-    	con.cerrarConexion();
-    	
-    	con.conectar();
     	con.guardarMesa(numeroMesa,a);
     	con.cerrarConexion();
     	
-    	iniciarArticulosMesa(numeroMesa);    	
+    	iniciarArticulosMesa(numeroMesa);    
+    	if(table.getRowCount()>0) {
+    		con.conectar();
+    		con.ejecutarQuery("update MESAS set estado = 'ocupada' where numero = "+numeroMesa);
+    		con.cerrarConexion();
+    	}
+    	principal.iniciarMesas();
     	
     }
     
@@ -462,65 +508,6 @@ public class Mesa extends JFrame {
     
     public static void actualizarSaldo(double saldo) {
     	saldo_final.setText(String.valueOf(saldo));
-    }
-    
-    public static void imprimir() throws PrintException {
-        PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null);
-
-        if (services.length > 0) {
-            // Obtener la impresora por defecto (puedes seleccionar una impresora espec�fica si lo deseas)
-            PrintService printService = services[0];
-            PrinterJob printerJob = PrinterJob.getPrinterJob();
-            
-            try {
-				printerJob.setPrintService(printService);
-			} catch (PrinterException e) {
-				e.printStackTrace();
-			}
-
-            Printable printable = new Printable() {
-                @Override
-                public int print(Graphics graphics, PageFormat pageFormat, int pageIndex) throws PrinterException {
-                    if (pageIndex != 0) {
-                        return NO_SUCH_PAGE;
-                    }
-
-                    // Configurar los estilos de fuente y tama�o
-                    Font font = new Font("Courier New", Font.PLAIN, 10);
-                    graphics.setFont(font);
-
-                    // Establecer la posici�n inicial del contenido del ticket
-                    int x = 10;
-                    int y = 10;
-
-                    // Imprimir los detalles de los art�culos
-                    for (int i = 0; i < articulosMesa.size(); i++) {
-                        ArticuloMesa a= articulosMesa.get(i);
-                        String linea = String.format("%-20s %6.2f %4d", a.getArticulo_descripcion(),"x", a.getCantidad(), a.getTotal());
-                        graphics.drawString(linea, x, y + i * 15);
-                    }
-
-                    // Imprimir el total de la operaci�n
-                    graphics.drawString("-------------------------------", x, y + articulosMesa.size() * 15);
-                    graphics.drawString(String.format("Total: %.2f", totalMesa(numeroMesa)), x, y + (articulosMesa.size() + 1) * 15);
-
-                    return PAGE_EXISTS;
-                }
-            };
-
-            // Asignar el objeto Printable al PrinterJob
-            printerJob.setPrintable(printable);
-
-            // Mostrar el di�logo de impresi�n y enviar el trabajo de impresi�n
-            if (printerJob.printDialog()) {
-                try {
-					printerJob.print();
-				} catch (PrinterException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-            }
-        }
     }
     
     public static double totalMesa(int numeroMesa) {
@@ -609,8 +596,7 @@ public class Mesa extends JFrame {
             e.printStackTrace();
         }
     }
-    
-    
+        
     public static String formatearDouble(double valor) {
         DecimalFormatSymbols simbolos = new DecimalFormatSymbols();
         simbolos.setDecimalSeparator(',');
