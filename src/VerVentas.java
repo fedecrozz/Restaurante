@@ -173,7 +173,9 @@ public class VerVentas extends JFrame {
 				if(table.getSelectedRow()<0) {
 					JOptionPane.showMessageDialog(null, "Primero seleccione una venta");
 				}else {
-					imprimirTicket();					
+					int numero = Integer.valueOf(table.getValueAt(table.getSelectedRow(), 0).toString());
+					VerValoresVenta v = new VerValoresVenta(numero);
+					v.setVisible(true);
 				}
 			}
 		});
@@ -201,15 +203,6 @@ public class VerVentas extends JFrame {
 	
 	public void iniciarVentasValores() {
 		
-		/*
-		
-		int numeroVenta = Integer.valueOf(table.getValueAt(table.getSelectedRow(), 0).toString());
-		
-		con.conectar();
-		ArrayList<ValorVenta> valores = con.getValoresVenta(numeroVenta);
-		con.cerrarConexion();
-		
-		*/
 		modeloValores = new DefaultTableModel();
 				
 		String[] columnNames = {"Forma de pago", "Monto"};

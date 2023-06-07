@@ -1240,7 +1240,7 @@ public class Conector {
 			String query = "SELECT VALORES_VENTA.valor, SUM(VALORES_VENTA.monto) AS total_monto " +
 			        "FROM VENTAS " +
 			        "JOIN VALORES_VENTA ON VENTAS.numero = VALORES_VENTA.venta_numero " +
-			        "WHERE VENTAS.fecha BETWEEN '2023/06/07' AND '2023/06/07' " +
+			        "WHERE VENTAS.fecha BETWEEN '"+FechaDesde+"' AND '"+FechaHasta+"' " +
 			        "GROUP BY VALORES_VENTA.valor";
 						
             PreparedStatement st = conexion.prepareStatement(query);
@@ -1248,10 +1248,10 @@ public class Conector {
             resultSet = st.executeQuery();
             
             while (resultSet.next()) {
-            	 String valor = resultSet.getString("valor");
+            	String valor = resultSet.getString("valor");
      		    double totalMonto = resultSet.getDouble("total_monto");
 
-     		   Object[] rowData = {valor, totalMonto};
+     		    Object[] rowData = {valor, totalMonto};
      		    modelo.addRow(rowData);
      		}
             	
@@ -1260,5 +1260,32 @@ public class Conector {
         }
 	}
 			
+	public void getValoresVentasFechas(DefaultTableModel modelo,int numeroVenta) {
+		ResultSet resultSet = null;		
+		try {
+			
+			String query = "SELECT VALORES_VENTA.valor, SUM(VALORES_VENTA.monto) AS total_monto " +
+			        "FROM VENTAS " +
+			        "JOIN VALORES_VENTA ON VENTAS.numero = VALORES_VENTA.venta_numero " +
+			        "WHERE VENTAS.numero = "+numeroVenta+" " +
+			        "GROUP BY VALORES_VENTA.valor";
+						
+            PreparedStatement st = conexion.prepareStatement(query);
+            
+            resultSet = st.executeQuery();
+            
+            while (resultSet.next()) {
+            	String valor = resultSet.getString("valor");
+     		    double totalMonto = resultSet.getDouble("total_monto");
+
+     		    Object[] rowData = {valor, totalMonto};
+     		    modelo.addRow(rowData);
+     		}
+            	
+        }catch (SQLException e) {
+        	System.out.println(e);
+        }
+	}
+	
 }
 
