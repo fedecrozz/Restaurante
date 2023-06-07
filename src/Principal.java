@@ -22,6 +22,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
@@ -132,7 +133,7 @@ public class Principal extends JFrame {
 				double ingresoManual = Double.parseDouble(JOptionPane.showInputDialog("Cuanto dinero desea ingresar?"));
 				
 				con.conectar();
-				con.ejecutarQuery("insert into INGRESOS (fecha,monto) values('"+getFechaByDate(new Date())+"',"+ingresoManual+") ");
+				con.ejecutarQuery("insert into INGRESOS (fecha,hora,monto) values('"+getFechaByDate(new Date())+"', '"+getHora()+"',"+ingresoManual+") ");
 				con.cerrarConexion();
 				
 			}
@@ -644,6 +645,11 @@ public class Principal extends JFrame {
 				e.printStackTrace();
 			}					
 			return finall;
+		}
+	    
+	    public static String getHora() {
+			DateTimeFormatter formateador = DateTimeFormatter.ofPattern("HH:mm:ss");
+			return formateador.format(LocalDateTime.now());
 		}
 	    
 }

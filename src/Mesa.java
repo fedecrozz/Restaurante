@@ -694,6 +694,9 @@ public class Mesa extends JFrame {
     }
     
     public void cerrarMesa() {
+    	
+    	
+    	
     	con.conectar();
     	MesaClase m = con.getMesa(numeroMesa);    	
     	con.cerrarConexion();

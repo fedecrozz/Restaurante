@@ -1215,11 +1215,13 @@ public class Conector {
             	
             	int numero = result.getInt("numero");
                 String fecha= result.getString("fecha");
+                String hora= result.getString("hora");
                 double monto = result.getDouble("monto");
                 
                 a.setNumero(numero);
                 a.setFecha(fecha);
                 a.setMonto(monto);
+                a.setHora(hora);
                 ingresos.add(a);
             	}
             	

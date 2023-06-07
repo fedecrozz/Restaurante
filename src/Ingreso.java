@@ -1,6 +1,6 @@
 
 public class Ingreso {
-	private String fecha;
+	private String fecha,hora;
 	private int numero;
 	private double monto;
 	public String getFecha() {
@@ -20,6 +20,12 @@ public class Ingreso {
 	}
 	public void setMonto(double monto) {
 		this.monto = monto;
+	}
+	public String getHora() {
+		return hora;
+	}
+	public void setHora(String hora) {
+		this.hora = hora;
 	}
 	
 	

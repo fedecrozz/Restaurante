@@ -165,9 +165,20 @@ public class VerVentas extends JFrame {
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(table.getSelectedRow()<0) {
+										
 					JOptionPane.showMessageDialog(null, "Primero seleccione una venta");
 				}else {
-					imprimirTicket();					
+					String observacion = "";
+					
+					if(table.getValueAt(table.getSelectedRow(), 8)!=null) {
+						observacion = table.getValueAt(table.getSelectedRow(), 8).toString();
+					}
+					
+					if(observacion.equals("INGRESO MANUAL")) {
+						JOptionPane.showMessageDialog(null, "No se pueden imprimir los ingresos manuales");
+					}else {
+						imprimirTicket();
+					}
 				}
 			}
 		});
@@ -342,7 +353,7 @@ public class VerVentas extends JFrame {
 		
 		for(int i = 0; i< ingresos.size();i++) {
 			Ingreso v = ingresos.get(i);
-			modelo.addRow(new Object[] {v.getNumero(),"",v.getFecha()+""+"","","","","",v.getMonto(),"INGRESO MANUAL"});
+			modelo.addRow(new Object[] {v.getNumero(),"",v.getFecha()+" "+v.getHora()+"","","","","",v.getMonto(),"INGRESO MANUAL"});
 		}
 		
 		table.setModel(modelo);
