@@ -18,9 +18,17 @@ import javax.swing.table.DefaultTableModel;
 
 
 import java.awt.event.ActionListener;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.awt.event.ActionEvent;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.Font;
 import javax.swing.SwingConstants;
 
@@ -119,6 +127,16 @@ public class Principal extends JFrame {
 		panel.add(btnNewButton_11_1_2);
 		
 		JButton btnNewButton_11_1_2_2 = new JButton("Nuevo Ingreso de dinero");
+		btnNewButton_11_1_2_2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				double ingresoManual = Double.parseDouble(JOptionPane.showInputDialog("Cuanto dinero desea ingresar?"));
+				
+				con.conectar();
+				con.ejecutarQuery("insert into INGRESOS (fecha,monto) values('"+getFechaByDate(new Date())+"',"+ingresoManual+") ");
+				con.cerrarConexion();
+				
+			}
+		});
 		btnNewButton_11_1_2_2.setBounds(765, 6, 187, 90);
 		panel.add(btnNewButton_11_1_2_2);
 		
@@ -600,4 +618,32 @@ public class Principal extends JFrame {
 	public void maximizar() {
 		setExtendedState(java.awt.Frame.MAXIMIZED_BOTH);
 	}
+	
+	 public String getFecha() {
+	  		LocalDate fechaHoy = LocalDate.now();
+	  		DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yy");
+	  		String fechaFinal=fechaHoy.format(formato).toString();
+	  		return fechaFinal;	
+	  	}
+	 
+	 public String getFechaByDate(java.util.Date date) {
+			DateFormat df= new SimpleDateFormat("dd/MM/yyyy");
+			String finall = df.format(date);	
+			
+			return getFechaYYYYMMDD(finall);
+		}
+	    
+	    public String getFechaYYYYMMDD(String fecha){		
+			Date date1;
+			String finall="";
+			try {
+				date1 = new SimpleDateFormat("dd/MM/yyyy").parse(fecha);
+				DateFormat df= new SimpleDateFormat("yyyy/MM/dd");
+				finall = df.format(date1);	
+			} catch (ParseException e) {			
+				e.printStackTrace();
+			}					
+			return finall;
+		}
+	    
 }

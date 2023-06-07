@@ -57,6 +57,7 @@ public class VerVentas extends JFrame {
 	private DefaultTableModel modelo = new DefaultTableModel();
 	private DefaultTableModel modeloValores = new DefaultTableModel();
 	private JTable table_1;
+	private JLabel totalIngresadoManualmente;
 
 	/**
 	 * Launch the application.
@@ -89,7 +90,7 @@ public class VerVentas extends JFrame {
 		contentPane.setLayout(null);
 		
 		JPanel panel = new JPanel();
-		panel.setBounds(1015, 596, 239, 74);
+		panel.setBounds(1015, 559, 239, 111);
 		contentPane.add(panel);
 		panel.setLayout(null);
 		
@@ -104,6 +105,12 @@ public class VerVentas extends JFrame {
 		TotalIngresos.setFont(new Font("Tahoma", Font.BOLD, 13));
 		TotalIngresos.setBounds(10, 43, 219, 20);
 		panel.add(TotalIngresos);
+		
+		totalIngresadoManualmente = new JLabel("Total ingresado: $0,00");
+		totalIngresadoManualmente.setHorizontalAlignment(SwingConstants.LEFT);
+		totalIngresadoManualmente.setFont(new Font("Tahoma", Font.BOLD, 13));
+		totalIngresadoManualmente.setBounds(10, 74, 219, 20);
+		panel.add(totalIngresadoManualmente);
 		
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBounds(10, 82, 995, 588);
@@ -182,8 +189,57 @@ public class VerVentas extends JFrame {
 		btnVerFormasDe.setBounds(802, 31, 211, 23);
 		panel_1.add(btnVerFormasDe);
 		
+		JButton btnEliminar = new JButton("Eliminar");
+		btnEliminar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if(table.getSelectedRow()<0) {
+					JOptionPane.showMessageDialog(null, "Primero seleccione una venta");
+				}else {
+					
+					String observacion = "";
+					
+					if(table.getValueAt(table.getSelectedRow(), 8)!=null) {
+						observacion = table.getValueAt(table.getSelectedRow(), 8).toString();
+					}
+					
+					boolean esIngreso = observacion.equals("INGRESO MANUAL");
+					
+					if(esIngreso) {
+						int input = JOptionPane.showConfirmDialog(null, "Estas seguro que desea eliminar este ingreso manual?");
+						if(input ==0) {
+							int numero = Integer.valueOf(table.getValueAt(table.getSelectedRow(), 0).toString());
+							con.conectar();
+							con.ejecutarQuery("delete from INGRESOS where numero ="+numero);
+							con.cerrarConexion();
+							
+							iniciarVentas();
+							iniciarVentasValores();
+							iniciarMontos();
+						}
+						
+					}else {
+						int input = JOptionPane.showConfirmDialog(null, "Estas seguro que desea eliminar esta venta?");
+						if(input ==0) {
+							int numero = Integer.valueOf(table.getValueAt(table.getSelectedRow(), 0).toString());
+							con.conectar();
+							con.ejecutarQuery("delete from VENTAS where numero ="+numero);
+							con.ejecutarQuery("delete from VALORES_VENTA where venta_numero ="+numero);
+							con.ejecutarQuery("delete from VENTAS_ARTICULOS where venta_numero ="+numero);
+							con.cerrarConexion();
+							
+							iniciarVentas();
+							iniciarVentasValores();
+							iniciarMontos();
+						}
+					}
+				}
+			}
+		});
+		btnEliminar.setBounds(581, 31, 211, 23);
+		panel_1.add(btnEliminar);
+		
 		JScrollPane scrollPane_1 = new JScrollPane();
-		scrollPane_1.setBounds(1015, 82, 239, 503);
+		scrollPane_1.setBounds(1015, 82, 239, 445);
 		contentPane.add(scrollPane_1);
 		
 		table_1 = new JTable();
@@ -264,6 +320,9 @@ public class VerVentas extends JFrame {
 		ArrayList<Venta> ventas = con.getVentas(FechaDesde,FechaHasta);
 		con.cerrarConexion();
 		
+		con.conectar();
+		ArrayList<Ingreso> ingresos = con.getIngresos(FechaDesde,FechaHasta);
+		con.cerrarConexion();
 		
 		modelo.addColumn("Venta Numero");
 		modelo.addColumn("Mesa Numero");
@@ -280,6 +339,12 @@ public class VerVentas extends JFrame {
 			Venta v = ventas.get(i);
 			modelo.addRow(new Object[] {v.getNumero(),v.getMesa_numero(),v.getFecha()+" "+v.getHora(),v.getMesero(),v.getDescuento(),v.getRecargo(),v.getPrecio(),(v.getPrecio()-v.getDescuento()+v.getRecargo()),v.getObservacion()});
 		}
+		
+		for(int i = 0; i< ingresos.size();i++) {
+			Ingreso v = ingresos.get(i);
+			modelo.addRow(new Object[] {v.getNumero(),"",v.getFecha()+""+"","","","","",v.getMonto(),"INGRESO MANUAL"});
+		}
+		
 		table.setModel(modelo);
 		
 	}
@@ -296,10 +361,14 @@ public class VerVentas extends JFrame {
 		double tIngresos = con.getMontoVentaIngresos(FechaDesde, FechaHasta);
 		con.cerrarConexion();
 		
+		con.conectar();
+		double tIngresadoManualmente = con.getMontoVentaIngresosManual(FechaDesde, FechaHasta);
+		con.cerrarConexion();
 		
 		
 		TotalMesas.setText("Total Mesas: $"+formatearDouble(tMesas));
 		TotalIngresos.setText("Total Sin Mesa: $"+formatearDouble(tIngresos));
+		totalIngresadoManualmente.setText("Total Ingresado: $"+formatearDouble(tIngresadoManualmente));
 	}
 	
 	public void iniciarFecha() {		

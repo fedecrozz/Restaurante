@@ -1199,6 +1199,37 @@ public class Conector {
         return ventas;
 		
 	}
+	
+	public ArrayList<Ingreso> getIngresos(String FechaDesde,String FechaHasta){
+		ArrayList<Ingreso> ingresos = new ArrayList<Ingreso>();
+		ResultSet result = null;
+		Ingreso a = null;
+		try {
+    		String query = "select * from INGRESOS where fecha between '"+FechaDesde+"' and '"+FechaHasta+"' order by numero DESC";
+    		
+            PreparedStatement st = conexion.prepareStatement(query);
+            result = st.executeQuery();
+            
+            while (result.next()) {
+            	a = new Ingreso();
+            	
+            	int numero = result.getInt("numero");
+                String fecha= result.getString("fecha");
+                double monto = result.getDouble("monto");
+                
+                a.setNumero(numero);
+                a.setFecha(fecha);
+                a.setMonto(monto);
+                ingresos.add(a);
+            	}
+            	
+        }catch (SQLException e) {
+        	System.out.println(e);
+            }
+       
+        return ingresos;
+		
+	}
 		
 	public Venta getVenta(int numeroVenta){
 		ResultSet result = null;
@@ -1270,6 +1301,24 @@ public class Conector {
 		
 		return monto;
 	}
+	
+	public double getMontoVentaIngresosManual(String fechaDesde, String fechaHasta) {
+		
+		double monto = 0;
+		ResultSet result = null;
+		
+		try {
+            PreparedStatement st = conexion.prepareStatement("SELECT sum(monto) FROM INGRESOS where fecha between '"+fechaDesde+"' and '"+fechaHasta+"'");
+            result = st.executeQuery();
+            monto =result.getDouble("sum(monto)");            
+        }catch (SQLException e) {
+				System.out.println(e);
+		}
+		
+		return monto;
+	}
+	
+	
 
 	public ArrayList<ValorVenta> getValoresVenta(int numeroVenta){
 		ArrayList<ValorVenta> Valores = new ArrayList<ValorVenta>();
