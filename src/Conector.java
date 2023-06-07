@@ -1055,6 +1055,79 @@ public class Conector {
         return Valores;
 	}
 	
+	public ArrayList<Venta> getVentas(String FechaDesde,String FechaHasta){
+		ArrayList<Venta> ventas = new ArrayList<Venta>();
+		ResultSet result = null;
+		Venta a = null;
+		try {
+    		String query = "select * from VENTAS where fecha between '"+FechaDesde+"' and '"+FechaHasta+"' order by numero DESC";
+    		
+            PreparedStatement st = conexion.prepareStatement(query);
+            result = st.executeQuery();
+            
+            while (result.next()) {
+            	a = new Venta();
+            	int numero_venta = result.getInt("numero");
+                int mesa_numero = result.getInt("mesa_numero");
+                String hora= result.getString("hora");
+                String fecha= result.getString("fecha");
+                double precio = result.getDouble("precio");
+                double descuento= result.getDouble("descuento");  
+                double recargo= result.getDouble("recargo");
+                String mesero= result.getString("mesero_nombre");
+                String observacion= result.getString("observacion");
+                
+                a.setNumero(numero_venta);
+                a.setMesa_numero(mesa_numero);
+                a.setHora(hora);
+                a.setFecha(fecha);
+                a.setPrecio(precio);
+                a.setDescuento(descuento);
+                a.setRecargo(recargo);
+                a.setMesero(mesero);
+                a.setObservacion(observacion);
+                
+                ventas.add(a);
+            	}
+            	
+        }catch (SQLException e) {
+        	System.out.println(e);
+            }
+       
+        return ventas;
+		
+	}
 	
+	public double getMontoVenta(String fechaDesde, String fechaHasta) {
+		
+		double monto = 0;
+		ResultSet result = null;
+		
+		try {
+            PreparedStatement st = conexion.prepareStatement("SELECT sum(precio) FROM VENTAS where fecha between '"+fechaDesde+"' and '"+fechaHasta+"' and mesa_numero > 0");
+            result = st.executeQuery();
+            monto =result.getDouble("sum(precio)");            
+        }catch (SQLException e) {
+				System.out.println(e);
+		}
+		
+		return monto;
+	}
+	
+	public double getMontoVentaIngresos(String fechaDesde, String fechaHasta) {
+		
+		double monto = 0;
+		ResultSet result = null;
+		
+		try {
+            PreparedStatement st = conexion.prepareStatement("SELECT sum(precio) FROM VENTAS where fecha between '"+fechaDesde+"' and '"+fechaHasta+"' and mesa_numero = 0");
+            result = st.executeQuery();
+            monto =result.getDouble("sum(precio)");            
+        }catch (SQLException e) {
+				System.out.println(e);
+		}
+		
+		return monto;
+	}
 }
 

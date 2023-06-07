@@ -61,6 +61,7 @@ public class Principal extends JFrame {
 	private JButton b12;
 	private JButton b6;
 	private Principal p ;
+	private JButton btnNewButton_11_1_2;
 	/**
 	 * Launch the application.
 	 */
@@ -97,22 +98,34 @@ public class Principal extends JFrame {
 		contentPane.add(panel);
 		panel.setLayout(null);
 		
-		JButton btnNewButton_11_1_2_1 = new JButton("Ver Ventas");
-		btnNewButton_11_1_2_1.setBounds(543, 6, 157, 90);
+		JButton btnNewButton_11_1_2_1 = new JButton("Nuevo Ingreso");
+		btnNewButton_11_1_2_1.setBounds(454, 6, 157, 90);
 		panel.add(btnNewButton_11_1_2_1);
+		
+		btnNewButton_11_1_2 = new JButton("Ver Ventas");
+		btnNewButton_11_1_2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				VerVentas v = new VerVentas();
+				v.setVisible(true);
+			}
+		});
+		btnNewButton_11_1_2.setBounds(642, 6, 157, 90);
+		panel.add(btnNewButton_11_1_2);
 		
 		JPanel panel_1 = new JPanel();
 		panel_1.setBounds(10, 11, 1244, 546);
 		contentPane.add(panel_1);
 		panel_1.setLayout(null);
-		
-		JButton btnNewButton_11_1_1 = new JButton("DELIVERY");
-		btnNewButton_11_1_1.setBounds(775, 465, 159, 70);
-		panel_1.add(btnNewButton_11_1_1);
 				
 		
 		JButton btnNewButton_11_1 = new JButton("SIN MESA");
-		btnNewButton_11_1.setBounds(308, 465, 159, 70);
+		btnNewButton_11_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Mesa m = new Mesa(p,0);
+				m.setVisible(true);
+			}
+		});
+		btnNewButton_11_1.setBounds(542, 465, 159, 70);
 		panel_1.add(btnNewButton_11_1);
 		
 		JPanel panel_2 = new JPanel();

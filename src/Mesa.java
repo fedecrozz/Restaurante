@@ -444,7 +444,12 @@ public class Mesa extends JFrame {
 		MesaClase m= con.getMesa(numeroMesa);
 		con.cerrarConexion();
 		
-		mesa.setText("Mesa: "+numeroMesa);
+		if(numeroMesa==0) {
+			mesa.setText("PARA LLEVAR/DELIVERY");
+		}else {
+			mesa.setText("Mesa: "+numeroMesa);			
+		}
+		
 		cuenta.setText("Cuenta: "+m.getCuenta().toUpperCase());
 		estado.setText("Estado: "+m.getEstado().toUpperCase());
 		descuento.setText("$"+quitarDecimal(""+m.getDescuento()));

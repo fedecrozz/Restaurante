@@ -31,12 +31,16 @@ import java.awt.print.Paper;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
@@ -146,7 +150,7 @@ public class CerrarMesa extends JFrame {
 		Venta v= new Venta();
 		v.setMesa_numero(mesaClase.getNumero());
 		v.setPrecio(mesaClase.getTotal());
-		v.setFecha(getFecha());
+		v.setFecha(getFechaByDate(new Date()));
 		v.setHora(getHora());
 		v.setDescuento(mesaClase.getDescuento());
 		v.setRecargo(mesaClase.getRecargo());
@@ -341,14 +345,14 @@ public class CerrarMesa extends JFrame {
   		String fechaFinal=fechaHoy.format(formato).toString();
   		return fechaFinal;	
   	}
-        
+       
     public void guardarVenta(String valor) {
     	//guarda la venta con un unico valor 
     	
     	Venta v= new Venta();
 		v.setMesa_numero(mesaClase.getNumero());
 		v.setPrecio(mesaClase.getTotal());
-		v.setFecha(getFecha());
+		v.setFecha(getFechaByDate(new Date()));
 		v.setHora(getHora());
 		v.setDescuento(mesaClase.getDescuento());
 		v.setRecargo(mesaClase.getRecargo());
@@ -379,6 +383,26 @@ public class CerrarMesa extends JFrame {
     	
     }
 
+    public String getFechaByDate(java.util.Date date) {
+		DateFormat df= new SimpleDateFormat("dd/MM/yyyy");
+		String finall = df.format(date);	
+		
+		return getFechaYYYYMMDD(finall);
+	}
+    
+    public String getFechaYYYYMMDD(String fecha){		
+		Date date1;
+		String finall="";
+		try {
+			date1 = new SimpleDateFormat("dd/MM/yyyy").parse(fecha);
+			DateFormat df= new SimpleDateFormat("yyyy/MM/dd");
+			finall = df.format(date1);	
+		} catch (ParseException e) {			
+			e.printStackTrace();
+		}					
+		return finall;
+	}
+    
     public void imprimirTicket() {
     	JTextArea ticket = new javax.swing.JTextArea();
     	String mesero = mesaClase.getMesero();
