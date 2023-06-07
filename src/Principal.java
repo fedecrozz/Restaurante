@@ -151,7 +151,7 @@ public class Principal extends JFrame {
 		JButton btnNewButton_11_1 = new JButton("SIN MESA");
 		btnNewButton_11_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Mesa m = new Mesa(p,0);
+				SinMesa m = new SinMesa(p,0);
 				m.setVisible(true);
 			}
 		});

@@ -298,8 +298,8 @@ public class VerVentas extends JFrame {
 		
 		
 		
-		TotalMesas.setText("Total Mesas: $"+tMesas);
-		TotalIngresos.setText("Total Ingresos: $"+tIngresos);
+		TotalMesas.setText("Total Mesas: $"+formatearDouble(tMesas));
+		TotalIngresos.setText("Total Sin Mesa: $"+formatearDouble(tIngresos));
 	}
 	
 	public void iniciarFecha() {		
@@ -338,8 +338,16 @@ public class VerVentas extends JFrame {
     		ticket.setText("\t\tParrilla el Pa \n");
     		ticket.setText(ticket.getText() + "----------------------------------------------------------------\n");
     		ticket.setText(ticket.getText() + "Fecha: "+v.getFecha()+" "+v.getHora()+"\n");
-    		ticket.setText(ticket.getText() + "Mesa: "+v.getMesa_numero()+"\n");
-    		ticket.setText(ticket.getText() + "Mesero: "+v.getMesero()+"\n");
+    		
+    		if(v.getMesa_numero()==0) {
+    			ticket.setText(ticket.getText() + "PARA LLEVAR / DELIVERY\n");
+    		}else {
+    			ticket.setText(ticket.getText() + "Mesa: "+v.getMesa_numero()+"\n");    			
+    		}
+    		
+    		if(v.getMesero()!=null) {
+    			ticket.setText(ticket.getText() + "Mesero: "+v.getMesero()+"\n");    			
+    		}
     		ticket.setText(ticket.getText() + "Venta N°: "+numeroVenta+"\n");
             ticket.setText(ticket.getText() + "----------------------------------------------------------------\n");
             

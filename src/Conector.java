@@ -542,7 +542,29 @@ public class Conector {
 		return mesero;
 	}
 	
-	
+	public MesaClase getSinMesa(int Mesa) {		
+		ResultSet result = null;
+		MesaClase p = null;
+		try {			
+			PreparedStatement st = conexion.prepareStatement("select * from SINMESA where numero = '"+Mesa+"'");
+			result = st.executeQuery();			
+			
+            p = new MesaClase();
+            double total= result.getDouble("total");
+            double descuento= result.getDouble("descuento");
+            double recargo= result.getDouble("recargo");
+            String nota= result.getString("observacion");
+            
+            p.setTotal(total);
+            p.setDescuento(descuento);
+            p.setRecargo(recargo);
+            p.setObservacion(nota);
+        	
+		} catch (SQLException ex) {
+			System.out.println(ex);
+		}
+		return p;
+	}
 	
 	public MesaClase getMesa(int Mesa) {		
 		ResultSet result = null;
@@ -623,6 +645,50 @@ public class Conector {
 	}
 	
 	public ArrayList<ArticuloMesa> getArticulosMesa(int numeroMesa){
+		ArrayList<ArticuloMesa> articulosMesa = new ArrayList<ArticuloMesa>();
+		ResultSet result = null;
+		ArticuloMesa a = null;
+		try {
+    		
+            PreparedStatement st = conexion.prepareStatement("select * from ARTICULOS_MESA where mesa_numero ='"+numeroMesa+"'");
+            result = st.executeQuery();
+            
+            while (result.next()) {
+            	a = new ArticuloMesa();
+                int mesa_numero = result.getInt("mesa_numero");
+                String hora= result.getString("hora");
+                String articulo_codigo= result.getString("articulo_codigo");
+                String articulo_descripcion= result.getString("articulo_descripcion");
+                double cantidad= result.getDouble("cantidad");  
+                double precio = result.getDouble("precio");
+                double total= result.getDouble("total");
+                String observacion= result.getString("observacion");
+                int item_numero = result.getInt("item_numero");
+                
+                a.setMesa_numero(mesa_numero);
+                a.setArticulo_codigo(articulo_codigo);
+                a.setArticulo_descripcion(articulo_descripcion);
+                a.setHora(hora);
+                a.setCantidad(cantidad);
+                a.setPrecio(precio);
+                a.setTotal(total);
+                a.setObservacion(observacion);
+                a.setItem_numero(item_numero);
+                
+                
+                articulosMesa.add(a);
+            	}
+            	
+        }catch (SQLException e) {
+        	System.out.println(e);
+            }
+       
+        return articulosMesa;
+		
+		
+	}
+	
+	public ArrayList<ArticuloMesa> getArticulosSinMesa(int numeroMesa){
 		ArrayList<ArticuloMesa> articulosMesa = new ArrayList<ArticuloMesa>();
 		ResultSet result = null;
 		ArticuloMesa a = null;
@@ -792,6 +858,8 @@ public class Conector {
 		
 		
 	}
+	
+	
 		
 	public int getNumeroUltima_Venta() {
 		
