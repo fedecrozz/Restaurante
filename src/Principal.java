@@ -97,12 +97,8 @@ public class Principal extends JFrame {
 		contentPane.add(panel);
 		panel.setLayout(null);
 		
-		JButton btnNewButton_11_1_2 = new JButton("Cerrar Caja");
-		btnNewButton_11_1_2.setBounds(1077, 6, 157, 90);
-		panel.add(btnNewButton_11_1_2);
-		
-		JButton btnNewButton_11_1_2_1 = new JButton("Ver Ventas del Dia");
-		btnNewButton_11_1_2_1.setBounds(10, 6, 157, 90);
+		JButton btnNewButton_11_1_2_1 = new JButton("Ver Ventas");
+		btnNewButton_11_1_2_1.setBounds(543, 6, 157, 90);
 		panel.add(btnNewButton_11_1_2_1);
 		
 		JPanel panel_1 = new JPanel();
@@ -111,12 +107,12 @@ public class Principal extends JFrame {
 		panel_1.setLayout(null);
 		
 		JButton btnNewButton_11_1_1 = new JButton("DELIVERY");
-		btnNewButton_11_1_1.setBounds(795, 465, 99, 70);
+		btnNewButton_11_1_1.setBounds(775, 465, 159, 70);
 		panel_1.add(btnNewButton_11_1_1);
 				
 		
-		JButton btnNewButton_11_1 = new JButton("PARA LLEVAR");
-		btnNewButton_11_1.setBounds(348, 465, 99, 70);
+		JButton btnNewButton_11_1 = new JButton("SIN MESA");
+		btnNewButton_11_1.setBounds(308, 465, 159, 70);
 		panel_1.add(btnNewButton_11_1);
 		
 		JPanel panel_2 = new JPanel();

@@ -56,12 +56,14 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class Mesa extends JFrame {
 
 	private JPanel contentPane;
 	private static JTable table;
-	private JTextField textField;
+	private JTextField nota;
 	private static JScrollPane scrollPane_1;
 	private static JTable table_1;
 	private static Conector con = new Conector();
@@ -73,7 +75,7 @@ public class Mesa extends JFrame {
 	private JScrollPane scrollPane;
 //	private static GUI gui = new GUI();
 	private static JLabel saldo_final;
-	private static Principal principal;
+	public static Principal principal;
 	private static JLabel mesa;
 	private static JLabel cuenta;
 	private static JLabel estado;
@@ -105,11 +107,12 @@ public class Mesa extends JFrame {
 	 * @param NumeroMesa 
 	 */
 	public Mesa(Principal p,int NumeroMesa) {
+		setResizable(false);
 		principal = p;
 		numeroMesa = NumeroMesa;
-		setResizable(false);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 1280, 720);
+		
 		contentPane = new JPanel();
 		contentPane.setBackground(Color.DARK_GRAY);
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -193,25 +196,54 @@ public class Mesa extends JFrame {
 		panel_2.setLayout(null);
 		
 		JButton btnDescuento = new JButton("Descuento");
+		btnDescuento.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				con.conectar();
+				double subtotal = con.getTotalMesa(NumeroMesa);
+				con.cerrarConexion();
+				
+				
+				if(subtotal==0) {
+					JOptionPane.showMessageDialog(null, "No se pueden hacer descuentos con la cuenta en 0");
+				}else {
+					double Descuento = Double.parseDouble(JOptionPane.showInputDialog(null,"Ingrese el monto de descuento"));
+					con.conectar();
+					con.ejecutarQuery("update MESAS set descuento ='"+Descuento+"' where numero = '"+numeroMesa+"'");
+					con.cerrarConexion();
+					iniciarArticulosMesa(NumeroMesa);
+					descuento.setText("$"+quitarDecimal(""+Descuento));
+				}
+			}
+		});
 		btnDescuento.setBounds(10, 7, 113, 41);
 		panel_2.add(btnDescuento);
 		
 		JButton btnRecargo = new JButton("Recargo");
+		btnRecargo.addActionListener(new ActionListener() {			
+				public void actionPerformed(ActionEvent e) {
+					con.conectar();
+					double subtotal = con.getTotalMesa(NumeroMesa);
+					con.cerrarConexion();
+															
+					double Recargo = Double.parseDouble(JOptionPane.showInputDialog(null,"Ingrese el monto de recargo"));
+					con.conectar();
+					con.ejecutarQuery("update MESAS set recargo ='"+Recargo+"' where numero = '"+numeroMesa+"'");
+					con.cerrarConexion();
+					iniciarArticulosMesa(NumeroMesa);
+					recargo.setText("$"+quitarDecimal(""+Recargo));
+					
+				}
+		});
 		btnRecargo.setBounds(133, 7, 113, 41);
 		panel_2.add(btnRecargo);
-		
-		JButton btnM = new JButton("Reservar");
-		btnM.setBounds(256, 7, 113, 41);
-		panel_2.add(btnM);
-		
-		JButton btnCambiarMesa = new JButton("Cambiar Mesa");
-		btnCambiarMesa.setBounds(379, 7, 127, 41);
-		panel_2.add(btnCambiarMesa);
 		
 		JButton btnCancelar = new JButton("Cancelar");
 		btnCancelar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				cancelarMesa();
+				int input =  JOptionPane.showConfirmDialog(null, "Esta seguro que desea cancelar la mesa?");
+				if (input==0) {
+					cancelarMesa();					
+				}
 			}
 		});
 		btnCancelar.setBounds(944, 7, 140, 41);
@@ -221,7 +253,8 @@ public class Mesa extends JFrame {
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				imprimirTicket();
+				cerrarMesa();
+				//imprimirTicket();
 				
 				
 			}
@@ -251,18 +284,89 @@ public class Mesa extends JFrame {
 		contentPane.add(cuenta);
 		
 		JButton btnNewButton_1 = new JButton("-");
+		btnNewButton_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				if(table.getSelectedRow()<0) {
+					JOptionPane.showMessageDialog(null, "Primero seleccione un articulo");
+				}else {
+					
+					int codigo = Integer.valueOf(table.getValueAt(table.getSelectedRow(), 1).toString());
+					
+					con.conectar();
+					con.ejecutarQuery("delete from ARTICULOS_MESA WHERE mesa_numero = "+numeroMesa +" and articulo_codigo = '"+codigo+"'");
+					con.cerrarConexion();
+					
+					if(table.getRowCount()==0) {
+						con.conectar();			
+						//establece la mesa en disponible (update)			
+						con.ejecutarQuery("update MESAS set estado = 'disponible' WHERE numero = "+numeroMesa);			
+						//establece la cuenta en cerrada
+						con.ejecutarQuery("update MESAS set cuenta = 'cerrada' WHERE numero = "+numeroMesa);
+						//vacia el nombre del mesero
+						con.ejecutarQuery("update MESAS set mesero_nombre = '' WHERE numero = "+numeroMesa);
+						//total = 0
+						con.ejecutarQuery("update MESAS set total = 0 WHERE numero = "+numeroMesa);
+						//descuento = 0
+						con.ejecutarQuery("update MESAS set descuento = 0 WHERE numero = "+numeroMesa);
+						//recargo = 0
+						con.ejecutarQuery("update MESAS set recargo = 0 WHERE numero = "+numeroMesa);
+						//vacia la nota
+						con.ejecutarQuery("update MESAS set nota = 0 WHERE numero = "+numeroMesa);
+						//limpia el array articulos_mesa
+						con.ejecutarQuery("delete from ARTICULOS_MESA WHERE mesa_numero = "+numeroMesa);
+						
+						con.cerrarConexion();
+						//inicia mesas
+						principal.iniciarMesas();
+					}
+					iniciarArticulosMesa(NumeroMesa);
+				}
+			}
+		});
 		btnNewButton_1.setBounds(1187, 98, 67, 55);
 		contentPane.add(btnNewButton_1);
 		
 		JButton btnNewButton_1_1 = new JButton("$");
+		btnNewButton_1_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if(table.getSelectedRow()<0) {
+					JOptionPane.showMessageDialog(null, "Primero seleccione un articulo");
+				}else {
+					
+					double precio = Integer.valueOf(JOptionPane.showInputDialog(null, "Ingrese el precio por unidad para este articulo."));
+					int codigo = Integer.valueOf(table.getValueAt(table.getSelectedRow(), 1).toString());
+					
+					double total = 0; 
+					con.conectar();
+					total = precio * con.getArticulosMesaCodigo(NumeroMesa, codigo).getCantidad();
+					con.cerrarConexion();
+					
+					String query = "update ARTICULOS_MESA set precio ='"+precio+"', total = '"+total+"' where articulo_codigo = '"+codigo+"' and mesa_numero ='"+numeroMesa+"'";
+					
+					con.conectar();
+					con.ejecutarQuery(query);
+					con.cerrarConexion();
+					
+					iniciarArticulosMesa(NumeroMesa);
+				}
+			}
+		});
 		btnNewButton_1_1.setBounds(1187, 164, 67, 55);
 		contentPane.add(btnNewButton_1_1);
 		
-		textField = new JTextField();
-		textField.setBorder(new TitledBorder(null, "Nota", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		textField.setBounds(10, 624, 337, 46);
-		contentPane.add(textField);
-		textField.setColumns(10);
+		nota = new JTextField();
+		nota.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent arg0) {
+				con.conectar();
+				con.ejecutarQuery("update MESAS set nota = '"+nota.getText()+"' where numero = '"+numeroMesa+"'");
+				con.cerrarConexion();
+			}
+		});
+		nota.setBorder(new TitledBorder(null, "Nota", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		nota.setBounds(10, 624, 491, 46);
+		contentPane.add(nota);
+		nota.setColumns(10);
 		
 		scrollPane_1 = new JScrollPane();
 		scrollPane_1.setBounds(10, 95, 208, 518);
@@ -288,7 +392,7 @@ public class Mesa extends JFrame {
 			}
 		});
 		
-		mesero.setBounds(980, 67, 193, 25);
+		mesero.setBounds(980, 67, 197, 25);
 		contentPane.add(mesero);
 		
 		JLabel lblMesero = new JLabel("Mesero");
@@ -347,12 +451,15 @@ public class Mesa extends JFrame {
 		recargo.setText("$"+quitarDecimal(""+m.getRecargo()));
 		subtotal.setText("$"+quitarDecimal(""+m.getSubtotal()));
 		
+		if(m.getObservacion() != null && !m.getObservacion().equals("0")) {
+			nota.setText(m.getObservacion());			
+		}else {
+			nota.setText("");
+		}
+		
 	}
 	
 	public void cancelarMesa() {
-		int input =  JOptionPane.showConfirmDialog(null, "Esta seguro que desea cancelar la mesa?");
-		if (input==0) {
-			
 			con.conectar();			
 			//establece la mesa en disponible (update)			
 			con.ejecutarQuery("update MESAS set estado = 'disponible' WHERE numero = "+numeroMesa);			
@@ -376,7 +483,7 @@ public class Mesa extends JFrame {
 			this.principal.iniciarMesas();
 			//dispose
 			this.dispose();
-		}
+		
 	}
 	
 	public void iniciarBotonesCategorias() {
@@ -553,12 +660,21 @@ public class Mesa extends JFrame {
 		}
 		actualizarSaldo(saldo);
 		table.setModel(modeloArticulosMesa);
-		//table.setDefaultRenderer(Object.class,gui);
+		
 		
     }
     
     public static void actualizarSaldo(double saldo) {
-    	saldo_final.setText(String.valueOf(saldo));
+    	con.conectar();
+    	double descuento = con.getMesa(numeroMesa).getDescuento()*-1;
+    	con.cerrarConexion();
+    	
+    	con.conectar();
+    	double recargo = con.getMesa(numeroMesa).getRecargo();
+    	con.cerrarConexion();
+    	
+    	saldo_final.setText(String.valueOf(saldo+descuento+recargo));
+    	subtotal.setText("$"+String.valueOf(saldo));
     }
     
     public static double totalMesa(int numeroMesa) {
@@ -569,6 +685,24 @@ public class Mesa extends JFrame {
     	con.cerrarConexion();
     	
     	return total;
+    }
+    
+    public void cerrarMesa() {
+    	con.conectar();
+    	MesaClase m = con.getMesa(numeroMesa);    	
+    	con.cerrarConexion();
+    	
+    	m.setTotal(totalMesa(numeroMesa));
+    	
+    	int input = JOptionPane.showConfirmDialog(null, "Cerrar mesa "+numeroMesa+"?");
+    	if(input == 0) {
+    		CerrarMesa c = new CerrarMesa(this,m);
+    		c.setVisible(true);
+    	}
+    	
+    	
+    	
+    	
     }
     
     public void imprimirTicket() {

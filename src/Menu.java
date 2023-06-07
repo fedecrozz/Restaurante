@@ -109,7 +109,7 @@ public class Menu extends JFrame {
 				m.setVisible(true);
 			}
 		});
-		btnNewButton.setBounds(618, 183, 144, 73);
+		btnNewButton.setBounds(10, 11, 144, 73);
 		contentPane.add(btnNewButton);
 		
 		JButton btnNewButton_1 = new JButton("Articulos");
@@ -119,7 +119,7 @@ public class Menu extends JFrame {
 				a.setVisible(true);
 			}
 		});
-		btnNewButton_1.setBounds(464, 267, 144, 73);
+		btnNewButton_1.setBounds(164, 11, 144, 73);
 		contentPane.add(btnNewButton_1);
 		
 		JButton btnNewButton_2 = new JButton("Categorias");
@@ -129,7 +129,7 @@ public class Menu extends JFrame {
 				c.setVisible(true);
 			}
 		});
-		btnNewButton_2.setBounds(618, 267, 144, 73);
+		btnNewButton_2.setBounds(318, 11, 144, 73);
 		contentPane.add(btnNewButton_2);
 		
 		JButton btnNewButton_3 = new JButton("Meseros");
@@ -139,7 +139,7 @@ public class Menu extends JFrame {
 				m.setVisible(true);
 			}
 		});
-		btnNewButton_3.setBounds(772, 267, 144, 73);
+		btnNewButton_3.setBounds(472, 11, 144, 73);
 		contentPane.add(btnNewButton_3);
 		
 		iniciarTodo();

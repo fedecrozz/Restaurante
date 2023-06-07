@@ -121,6 +121,25 @@ public class Conector {
 		return codigo;
 	}
 	
+	public int getNumeroUltimaVenta() {
+	
+		
+		ResultSet result = null;
+		int numero = 0;
+		
+		
+		try {			
+			PreparedStatement st = conexion.prepareStatement("select * from VENTAS order by numero DESC limit 1");
+			result = st.executeQuery();			
+			
+			numero= result.getInt("numero");
+            
+		} catch (SQLException ex) {
+			System.out.println(ex);
+		}
+		return numero;
+	}
+	
 	
 	public boolean existeArticulo(String nombre) {
 		ResultSet result = null;
@@ -217,7 +236,26 @@ public class Conector {
 		}
 	}
 	
-	
+	public void guardarVenta(Venta Venta) {
+		try {
+			PreparedStatement st = conexion.prepareStatement("insert into VENTAS (mesa_numero,precio,costo,fecha,hora,descuento,recargo,mesero_nombre,observacion) values (?,?,?,?,?,?,?,?,?)");
+			
+            st.setInt(1,Venta.getMesa_numero());
+            st.setDouble(2,Venta.getPrecio());
+            st.setDouble(3,Venta.getCosto());
+            st.setString(4,Venta.getFecha());
+            st.setString(5,Venta.getHora());
+            st.setDouble(6,Venta.getDescuento());
+            st.setDouble(7,Venta.getRecargo());
+            st.setString(8,Venta.getMesero());
+            st.setString(9,Venta.getObservacion());
+            
+            st.execute();
+            
+		} catch (SQLException e) {
+			System.out.println(e);
+		}
+	}
 	
 	public ArrayList<Articulo> getArticulos(){
 		ArrayList<Articulo> articulos= new ArrayList<Articulo>();
@@ -974,11 +1012,12 @@ public class Conector {
 		return total;
 	}
 	
+	
 	public void modificarArticuloMesa(ArticuloMesa c) {
 		try {
 			
 			String query = "update ARTICULOS_MESA set "+			 
-					"cantidad = '"+c.getCantidad()+"',"+
+					"cantidad = '"+c.getCantidad()+"', "+
 					"total = '"+c.getTotal()+"' "+
 					"WHERE mesa_numero = '"+c.getMesa_numero()+"' AND articulo_codigo = '"+c.getArticulo_codigo()+"'";
 					
@@ -992,7 +1031,30 @@ public class Conector {
 			System.out.println(e);
 		}
 	}
-	//modificarArticuloMesa
+	
+	public ArrayList<String> getValores(){
+		ArrayList<String> Valores = new ArrayList<String>();
+		ResultSet result = null;
+		String a = null;
+		try {
+    		
+            PreparedStatement st = conexion.prepareStatement("select * from VALORES order by nombre ASC");
+            result = st.executeQuery();
+            
+            while (result.next()) {
+            	
+                String nombre= result.getString("nombre");
+                
+                Valores.add(nombre);
+            	}
+            	
+        }catch (SQLException e) {
+        	System.out.println(e);
+            }
+       
+        return Valores;
+	}
+	
 	
 }
 
