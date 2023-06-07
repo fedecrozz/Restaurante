@@ -252,8 +252,9 @@ public class Mesa extends JFrame {
 		JButton btnNewButton = new JButton("Cerrar cuenta");
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				
-				cerrarMesa();
+				if(totalMesa(numeroMesa)>0) {
+					cerrarMesa();					
+				}
 				//imprimirTicket();
 				
 				
@@ -712,7 +713,7 @@ public class Mesa extends JFrame {
     
     public void imprimirTicket() {
     	JTextArea ticket = new javax.swing.JTextArea();
-    	String mesero = "Rodrigo";
+    	String mesero = "";
     	
     	try {
     		ticket.setFont(new Font("Arial",Font.PLAIN,7));

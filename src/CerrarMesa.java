@@ -184,12 +184,39 @@ public class CerrarMesa extends JFrame {
 		}
 		
 		
-    	
+    	guardarArticulosVenta();
 		imprimirTicket();
     	Mesa.cancelarMesa();
     	Mesa.principal.iniciarMesas();
     	Mesa.dispose();
     	this.dispose();
+	}
+	
+	public void guardarArticulosVenta() {
+		con.conectar();
+		ArrayList<ArticuloMesa> articulos = con.getArticulosMesa(mesaClase.getNumero());	
+		con.cerrarConexion();
+		
+		con.conectar();		
+		int ultimo = con.getNumeroUltimaVenta();
+		con.cerrarConexion();
+		
+		for(int i = 0 ; i< articulos.size(); i++) {
+			ArticuloMesa a = articulos.get(i);
+			String query = "insert into VENTAS_ARTICULOS (venta_numero,articulo_codigo,articulo_descripcion,precio,total,cantidad,hora) values ("+ultimo+","+
+																																					   "'"+a.getArticulo_codigo()+"',"+
+																																					   "'"+a.getArticulo_descripcion()+"',"+
+																																					   a.getPrecio()+","+
+																																					   a.getTotal()+","+
+																																					   a.getCantidad()+","+
+																																					   "'"+a.getHora()+"')";
+			
+			con.conectar();
+	    	con.ejecutarQuery(query);
+	    	con.cerrarConexion();
+		}
+		
+		
 	}
 	
 	public void iniciarMonto() {
@@ -375,6 +402,7 @@ public class CerrarMesa extends JFrame {
     	con.ejecutarQuery(query);
     	con.cerrarConexion();
     	
+    	guardarArticulosVenta();
     	imprimirTicket();
     	Mesa.cancelarMesa();
     	Mesa.principal.iniciarMesas();
@@ -407,6 +435,10 @@ public class CerrarMesa extends JFrame {
     	JTextArea ticket = new javax.swing.JTextArea();
     	String mesero = mesaClase.getMesero();
     	
+    	con.conectar();		
+		int ultimo = con.getNumeroUltimaVenta();
+		con.cerrarConexion();
+    	
     	try {
     		ticket.setFont(new Font("Arial",Font.PLAIN,7));
     		ticket.setText("\t\tParrilla el Pa \n");
@@ -414,6 +446,7 @@ public class CerrarMesa extends JFrame {
     		ticket.setText(ticket.getText() + "Fecha: "+getFecha()+" "+getHora()+"\n");
     		ticket.setText(ticket.getText() + "Mesa: "+mesaClase.getNumero()+"\n");
     		ticket.setText(ticket.getText() + "Mesero: "+mesero+"\n");
+    		ticket.setText(ticket.getText() + "Venta N°: "+ultimo+"\n");
             ticket.setText(ticket.getText() + "----------------------------------------------------------------\n");
             
             con.conectar();

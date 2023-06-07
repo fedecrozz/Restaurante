@@ -98,8 +98,14 @@ public class Principal extends JFrame {
 		contentPane.add(panel);
 		panel.setLayout(null);
 		
-		JButton btnNewButton_11_1_2_1 = new JButton("Nuevo Ingreso");
-		btnNewButton_11_1_2_1.setBounds(454, 6, 157, 90);
+		JButton btnNewButton_11_1_2_1 = new JButton("Meseros");
+		btnNewButton_11_1_2_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Meseros m = new Meseros();
+				m.setVisible(true);
+			}
+		});
+		btnNewButton_11_1_2_1.setBounds(527, 6, 187, 90);
 		panel.add(btnNewButton_11_1_2_1);
 		
 		btnNewButton_11_1_2 = new JButton("Ver Ventas");
@@ -109,8 +115,32 @@ public class Principal extends JFrame {
 				v.setVisible(true);
 			}
 		});
-		btnNewButton_11_1_2.setBounds(642, 6, 157, 90);
+		btnNewButton_11_1_2.setBounds(1003, 6, 187, 90);
 		panel.add(btnNewButton_11_1_2);
+		
+		JButton btnNewButton_11_1_2_2 = new JButton("Nuevo Ingreso de dinero");
+		btnNewButton_11_1_2_2.setBounds(765, 6, 187, 90);
+		panel.add(btnNewButton_11_1_2_2);
+		
+		JButton btnNewButton_11_1_2_3 = new JButton("Categorias");
+		btnNewButton_11_1_2_3.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Categorias c = new Categorias();
+				c.setVisible(true);
+			}
+		});
+		btnNewButton_11_1_2_3.setBounds(289, 6, 187, 90);
+		panel.add(btnNewButton_11_1_2_3);
+		
+		JButton btnNewButton_11_1_2_4 = new JButton("Articulos");
+		btnNewButton_11_1_2_4.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				Articulos a = new Articulos();
+				a.setVisible(true);
+			}
+		});
+		btnNewButton_11_1_2_4.setBounds(51, 6, 187, 90);
+		panel.add(btnNewButton_11_1_2_4);
 		
 		JPanel panel_1 = new JPanel();
 		panel_1.setBounds(10, 11, 1244, 546);

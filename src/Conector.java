@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.swing.table.DefaultTableModel;
+
 public class Conector {
 
 	private String path = new File("bd.db").getAbsolutePath();	
@@ -664,6 +666,46 @@ public class Conector {
 		
 	}
 	
+	public ArrayList<ArticuloMesa> getArticulosMesaVenta(int numeroVenta){
+		ArrayList<ArticuloMesa> articulosMesa = new ArrayList<ArticuloMesa>();
+		ResultSet result = null;
+		ArticuloMesa a = null;
+		try {
+    		
+            PreparedStatement st = conexion.prepareStatement("select * from VENTAS_ARTICULOS where venta_numero ='"+numeroVenta+"' ");
+            result = st.executeQuery();
+            
+            while (result.next()) {
+            	a = new ArticuloMesa();
+                int venta_numero = result.getInt("venta_numero");
+                String articulo_codigo= result.getString("articulo_codigo");
+                String articulo_descripcion= result.getString("articulo_descripcion");
+                double precio = result.getDouble("precio");
+                double total= result.getDouble("total");
+                double cantidad= result.getDouble("cantidad");  
+                String observacion= result.getString("observacion");
+                String hora= result.getString("hora");
+
+                a.setArticulo_codigo(articulo_codigo);
+                a.setArticulo_descripcion(articulo_descripcion);
+                a.setHora(hora);
+                a.setCantidad(cantidad);
+                a.setPrecio(precio);
+                a.setTotal(total);
+                a.setObservacion(observacion);
+                
+                articulosMesa.add(a);
+            	}
+            	
+        }catch (SQLException e) {
+        	System.out.println(e);
+            }
+       
+        return articulosMesa;
+		
+		
+	}
+			
 	public ArticuloMesa getArticulosMesaCodigo(int numeroMesa, int codigo){
 		
 		ResultSet result = null;
@@ -706,9 +748,7 @@ public class Conector {
 		
 		
 	}
-	
-	
-	
+		
 	public ArrayList<MesaClase> getMesaClase(){
 		ArrayList<MesaClase> Mesas = new ArrayList<MesaClase>();
 		ResultSet result = null;
@@ -752,10 +792,7 @@ public class Conector {
 		
 		
 	}
-	
-	
-	
-	
+		
 	public int getNumeroUltima_Venta() {
 		
 		int numero = 0;
@@ -794,8 +831,7 @@ public class Conector {
 				System.out.println(e);
 		}		
 	}
-	
-	
+		
 	public double ejecutarQuery(String query,String get) {
 		double numero = 0;
 		
@@ -854,8 +890,7 @@ public class Conector {
 			System.out.println(e);
 		}
 	}
-	
-	
+		
 	public void eliminarArticulosVenta(int numero) {
 		try {
 			 PreparedStatement ps = conexion.prepareStatement("delete from VENTAS_ARTICULOS where venta_numero='"+numero+"'");
@@ -1011,8 +1046,7 @@ public class Conector {
 		
 		return total;
 	}
-	
-	
+		
 	public void modificarArticuloMesa(ArticuloMesa c) {
 		try {
 			
@@ -1097,6 +1131,45 @@ public class Conector {
         return ventas;
 		
 	}
+		
+	public Venta getVenta(int numeroVenta){
+		ResultSet result = null;
+		Venta a = null;
+		
+		try {
+    		String query = "select * from VENTAS where numero = "+numeroVenta+"";
+    		
+            PreparedStatement st = conexion.prepareStatement(query);
+            result = st.executeQuery();
+            
+        	a = new Venta();
+        	int numero_venta = result.getInt("numero");
+            int mesa_numero = result.getInt("mesa_numero");
+            String hora= result.getString("hora");
+            String fecha= result.getString("fecha");
+            double precio = result.getDouble("precio");
+            double descuento= result.getDouble("descuento");  
+            double recargo= result.getDouble("recargo");
+            String mesero= result.getString("mesero_nombre");
+            String observacion= result.getString("observacion");
+            
+            a.setNumero(numero_venta);
+            a.setMesa_numero(mesa_numero);
+            a.setHora(hora);
+            a.setFecha(fecha);
+            a.setPrecio(precio);
+            a.setDescuento(descuento);
+            a.setRecargo(recargo);
+            a.setMesero(mesero);
+            a.setObservacion(observacion);
+                
+        }catch (SQLException e) {
+        	System.out.println(e);
+        }
+       
+        return a;
+		
+	}
 	
 	public double getMontoVenta(String fechaDesde, String fechaHasta) {
 		
@@ -1129,5 +1202,63 @@ public class Conector {
 		
 		return monto;
 	}
+
+	public ArrayList<ValorVenta> getValoresVenta(int numeroVenta){
+		ArrayList<ValorVenta> Valores = new ArrayList<ValorVenta>();
+		ResultSet result = null;
+		ValorVenta a = null;
+		try {
+    		
+            PreparedStatement st = conexion.prepareStatement("select * from VALORES_VENTA where venta_numero = "+numeroVenta+" order by nombre ASC");
+            result = st.executeQuery();
+            
+            while (result.next()) {
+            	
+            	a = new ValorVenta();
+            	int numero = result.getInt("venta_numero");
+                String valor= result.getString("valor");
+                double monto = result.getDouble("monto");
+                
+                a.setNumeroVenta(numeroVenta);
+                a.setValor(valor);
+                a.setMonto(monto);
+                
+                Valores.add(a);
+            	}
+            	
+        }catch (SQLException e) {
+        	System.out.println(e);
+            }
+       
+        return Valores;
+	}
+
+	public void getValoresVentasFechas(DefaultTableModel modelo, String FechaDesde, String FechaHasta) {
+		ResultSet resultSet = null;		
+		try {
+			
+			String query = "SELECT VALORES_VENTA.valor, SUM(VALORES_VENTA.monto) AS total_monto " +
+			        "FROM VENTAS " +
+			        "JOIN VALORES_VENTA ON VENTAS.numero = VALORES_VENTA.venta_numero " +
+			        "WHERE VENTAS.fecha BETWEEN '2023/06/07' AND '2023/06/07' " +
+			        "GROUP BY VALORES_VENTA.valor";
+						
+            PreparedStatement st = conexion.prepareStatement(query);
+            
+            resultSet = st.executeQuery();
+            
+            while (resultSet.next()) {
+            	 String valor = resultSet.getString("valor");
+     		    double totalMonto = resultSet.getDouble("total_monto");
+
+     		   Object[] rowData = {valor, totalMonto};
+     		    modelo.addRow(rowData);
+     		}
+            	
+        }catch (SQLException e) {
+        	System.out.println(e);
+        }
+	}
+			
 }
 
