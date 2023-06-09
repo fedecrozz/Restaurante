@@ -179,7 +179,7 @@ public class ArticulosDelivery extends JFrame {
 				String codigo = tabla_articulos.getValueAt(tabla_articulos.getSelectedRow(), 0).toString();
 				
 				con.conectar();
-				Articulo art = con.getArticulo(codigo);
+				Articulo art = con.getArticuloDelivery(codigo);
 				con.cerrarConexion();
 				
 				ArticuloDeliveryModificar a = new ArticuloDeliveryModificar(this, art);
