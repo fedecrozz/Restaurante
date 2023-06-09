@@ -29,7 +29,7 @@ public class Menu extends JFrame {
 			public void run() {
 				try {
 					Menu frame = new Menu();
-					frame.setVisible(true);
+					//frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -41,7 +41,7 @@ public class Menu extends JFrame {
 	 * Create the frame.
 	 */
 	public Menu() {
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 1280, 720);
 		contentPane = new JPanel();
 		contentPane.setBackground(Color.BLACK);
@@ -50,54 +50,14 @@ public class Menu extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		JButton btnNewButton = new JButton("Mesas");
-		btnNewButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				Principal m = new Principal();
-				m.setVisible(true);
-			}
-		});
-		btnNewButton.setBounds(10, 11, 144, 73);
-		contentPane.add(btnNewButton);
-		
-		JButton btnNewButton_1 = new JButton("Articulos");
-		btnNewButton_1.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				Articulos a = new Articulos();
-				a.setVisible(true);
-			}
-		});
-		btnNewButton_1.setBounds(164, 11, 144, 73);
-		contentPane.add(btnNewButton_1);
-		
-		JButton btnNewButton_2 = new JButton("Categorias");
-		btnNewButton_2.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				Categorias c = new Categorias();
-				c.setVisible(true);
-			}
-		});
-		btnNewButton_2.setBounds(318, 11, 144, 73);
-		contentPane.add(btnNewButton_2);
-		
-		JButton btnNewButton_3 = new JButton("Meseros");
-		btnNewButton_3.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				Meseros m = new Meseros();
-				m.setVisible(true);
-			}
-		});
-		btnNewButton_3.setBounds(472, 11, 144, 73);
-		contentPane.add(btnNewButton_3);
-		
 		iniciarTodo();
 	}
 	
 	
 	public void iniciarTodo() {
-		maximizar();
-		centrar();
-		//setearApariencia();
+		Principal p = new Principal();
+		p.setVisible(true);
+		dispose();
 	}
 	
 	public void setearApariencia() {

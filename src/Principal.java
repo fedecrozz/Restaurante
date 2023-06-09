@@ -71,6 +71,7 @@ public class Principal extends JFrame {
 	private JButton b6;
 	private Principal p ;
 	private JButton btnNewButton_11_1_2;
+	private JButton btnNewButton_11_1_2_5;
 	/**
 	 * Launch the application.
 	 */
@@ -114,7 +115,7 @@ public class Principal extends JFrame {
 				m.setVisible(true);
 			}
 		});
-		btnNewButton_11_1_2_1.setBounds(527, 6, 187, 90);
+		btnNewButton_11_1_2_1.setBounds(712, 6, 163, 90);
 		panel.add(btnNewButton_11_1_2_1);
 		
 		btnNewButton_11_1_2 = new JButton("Ver Ventas");
@@ -124,10 +125,10 @@ public class Principal extends JFrame {
 				v.setVisible(true);
 			}
 		});
-		btnNewButton_11_1_2.setBounds(1003, 6, 187, 90);
+		btnNewButton_11_1_2.setBounds(1062, 6, 163, 90);
 		panel.add(btnNewButton_11_1_2);
 		
-		JButton btnNewButton_11_1_2_2 = new JButton("Nuevo Ingreso de dinero");
+		JButton btnNewButton_11_1_2_2 = new JButton("Ingresar dinero");
 		btnNewButton_11_1_2_2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				double ingresoManual = Double.parseDouble(JOptionPane.showInputDialog("Cuanto dinero desea ingresar?"));
@@ -138,7 +139,7 @@ public class Principal extends JFrame {
 				
 			}
 		});
-		btnNewButton_11_1_2_2.setBounds(765, 6, 187, 90);
+		btnNewButton_11_1_2_2.setBounds(887, 6, 163, 90);
 		panel.add(btnNewButton_11_1_2_2);
 		
 		JButton btnNewButton_11_1_2_3 = new JButton("Categorias");
@@ -148,18 +149,38 @@ public class Principal extends JFrame {
 				c.setVisible(true);
 			}
 		});
-		btnNewButton_11_1_2_3.setBounds(289, 6, 187, 90);
+		btnNewButton_11_1_2_3.setBounds(539, 6, 163, 90);
 		panel.add(btnNewButton_11_1_2_3);
 		
+		btnNewButton_11_1_2_5 = new JButton("Categorias DELIVERY");
+		btnNewButton_11_1_2_5.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				CategoriasDelivery c = new CategoriasDelivery();
+				c.setVisible(true);
+			}
+		});
+		btnNewButton_11_1_2_5.setBounds(183, 6, 163, 90);
+		panel.add(btnNewButton_11_1_2_5);
+		
+		JButton btnNewButton_11_1_2_4_1 = new JButton("Articulos DELIVERY");
+		btnNewButton_11_1_2_4_1.setBounds(10, 6, 163, 90);
+		panel.add(btnNewButton_11_1_2_4_1);
+		
 		JButton btnNewButton_11_1_2_4 = new JButton("Articulos");
+		btnNewButton_11_1_2_4.setBounds(366, 6, 163, 90);
+		panel.add(btnNewButton_11_1_2_4);
 		btnNewButton_11_1_2_4.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				Articulos a = new Articulos();
 				a.setVisible(true);
 			}
 		});
-		btnNewButton_11_1_2_4.setBounds(51, 6, 187, 90);
-		panel.add(btnNewButton_11_1_2_4);
+		btnNewButton_11_1_2_4_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				ArticulosDelivery a = new ArticulosDelivery();
+				a.setVisible(true);
+			}
+		});
 		
 		JPanel panel_1 = new JPanel();
 		panel_1.setBounds(10, 11, 1244, 546);
@@ -169,12 +190,12 @@ public class Principal extends JFrame {
 		
 		JButton btnNewButton_11_1 = new JButton("SIN MESA");
 		btnNewButton_11_1.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(ActionEvent e) {				
 				SinMesa m = new SinMesa(p,0);
 				m.setVisible(true);
 			}
 		});
-		btnNewButton_11_1.setBounds(542, 465, 159, 70);
+		btnNewButton_11_1.setBounds(775, 465, 159, 70);
 		panel_1.add(btnNewButton_11_1);
 		
 		JPanel panel_2 = new JPanel();
@@ -388,6 +409,16 @@ public class Principal extends JFrame {
 		lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 13));
 		lblNewLabel.setBounds(591, 11, 46, 14);
 		panel_1.add(lblNewLabel);
+		
+		JButton btnNewButton_11_1_1 = new JButton("DELIVERY");
+		btnNewButton_11_1_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				Delivery d = new Delivery(p, -1);
+				d.setVisible(true);
+			}
+		});
+		btnNewButton_11_1_1.setBounds(308, 465, 159, 70);
+		panel_1.add(btnNewButton_11_1_1);
 		b7.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				Mesa m = new Mesa(p,7);
@@ -651,5 +682,4 @@ public class Principal extends JFrame {
 			DateTimeFormatter formateador = DateTimeFormatter.ofPattern("HH:mm:ss");
 			return formateador.format(LocalDateTime.now());
 		}
-	    
 }

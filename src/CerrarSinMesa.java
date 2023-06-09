@@ -444,7 +444,7 @@ public class CerrarSinMesa extends JFrame {
     		ticket.setText("\t\tParrilla el Pa \n");
     		ticket.setText(ticket.getText() + "----------------------------------------------------------------\n");
     		ticket.setText(ticket.getText() + "Fecha: "+getFecha()+" "+getHora()+"\n");
-    		ticket.setText(ticket.getText() + "PARA LLEVAR / DELIVERY \n");
+    		ticket.setText(ticket.getText() + "PARA LLEVAR\n");
     		ticket.setText(ticket.getText() + "Venta N°: "+ultimo+"\n");
             ticket.setText(ticket.getText() + "----------------------------------------------------------------\n");
             

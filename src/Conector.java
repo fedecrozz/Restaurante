@@ -66,9 +66,46 @@ public class Conector {
 		return ret;
 	}
 	
+	public boolean existeCategoriaDelivery(String Descripcion) {
+		ResultSet result = null;
+		boolean ret = false;
+		
+		try {
+			PreparedStatement st = conexion.prepareStatement("select descripcion from CATEGORIAS_DELIVERY where descripcion= '"+Descripcion+"'");
+			result = st.executeQuery();			
+			String descripcion= result.getString("descripcion");
+            
+            if(descripcion.equals(Descripcion)) {
+            	ret=true;
+            }
+            
+		} catch (Exception e) {}
+				
+		return ret;
+	}
+	
 	public void guardarCategoria(String Descripcion) {
 		try {
 			PreparedStatement st = conexion.prepareStatement("insert into CATEGORIAS (codigo, descripcion) values (?,?)");
+			String ultimo = getCodigoUltimaCategoria();			
+			
+			if(ultimo.isEmpty()) {
+            	ultimo = "0"; 
+            }
+			
+            st.setString(1,String.valueOf(Integer.valueOf(ultimo)+1));
+            st.setString(2,Descripcion);
+            
+            st.execute();
+            
+		} catch (SQLException e) {
+			System.out.println(e);
+		}
+	}
+	
+	public void guardarCategoriaDelivery(String Descripcion) {
+		try {
+			PreparedStatement st = conexion.prepareStatement("insert into CATEGORIAS_DELIVERY (codigo, descripcion) values (?,?)");
 			String ultimo = getCodigoUltimaCategoria();			
 			
 			if(ultimo.isEmpty()) {
@@ -161,6 +198,24 @@ public class Conector {
 		return ret;
 	}
 	
+	public boolean existeArticuloDelivery(String nombre) {
+		ResultSet result = null;
+		boolean ret = false;
+		
+		try {
+			PreparedStatement st = conexion.prepareStatement("select nombre from ARTICULOS_DELIVERY where codigo = '"+nombre+"'");
+			result = st.executeQuery();			
+			String Nombre= result.getString("descripcion");
+            
+            if(Nombre.equals(nombre)) {
+            	ret=true;
+            }
+            
+		} catch (Exception e) {}
+				
+		return ret;
+	}
+	
 	public boolean existeMesero(String nombre) {
 		ResultSet result = null;
 		boolean ret = false;
@@ -199,9 +254,49 @@ public class Conector {
 		return codigo;
 	}
 	
+	public String getCodigoUltimoArticuloDelivery() {
+		
+		
+		ResultSet result = null;
+		String codigo = "";
+		String ultimo ="";
+		
+		
+		try {			
+			PreparedStatement st = conexion.prepareStatement("select * from ARTICULOS_DELIVERY order by codigo DESC limit 1");
+			result = st.executeQuery();			
+			
+            codigo= result.getString("codigo");
+            
+		} catch (SQLException ex) {
+			System.out.println(ex);
+		}
+		return codigo;
+	}
+	
 	public void guardarArticulo(Articulo c) {
 		try {
 			PreparedStatement st = conexion.prepareStatement("insert into ARTICULOS(codigo,descripcion,categoria,precio,costo,stock,observacion) values (?,?,?,?,?,?,?)");
+			
+            
+            st.setInt(1,c.getCodigo());
+            st.setString(2,c.getDescripcion());
+            st.setString(3,c.getCategoria());
+            st.setDouble(4,c.getPrecio());
+            st.setDouble(5,c.getCosto());
+            st.setDouble(6,c.getStock());
+            st.setString(7,c.getObservacion());
+            
+            st.execute();
+            
+		} catch (SQLException e) {
+			System.out.println(e);
+		}
+	}
+	
+	public void guardarArticuloDelivery(Articulo c) {
+		try {
+			PreparedStatement st = conexion.prepareStatement("insert into ARTICULOS_DELIVERY(codigo,descripcion,categoria,precio,costo,stock,observacion) values (?,?,?,?,?,?,?)");
 			
             
             st.setInt(1,c.getCodigo());
@@ -366,6 +461,45 @@ public class Conector {
         return articulos;
 	}
 	
+	public ArrayList<Articulo> getArticulosDelivery(String Categoria){
+		ArrayList<Articulo> articulos= new ArrayList<Articulo>();
+		ResultSet result = null;
+		
+        try {
+        		
+            PreparedStatement st = conexion.prepareStatement("select * from ARTICULOS_DELIVERY where categoria = '"+Categoria+"' order by descripcion ASC");
+            result = st.executeQuery();
+            
+            while (result.next()) {
+            	Articulo p = new Articulo();
+                int codigo= result.getInt("codigo");
+                String descripcion= result.getString("descripcion");
+                String categoria= result.getString("categoria");
+                double precio= result.getDouble("precio");
+                double precio2= result.getDouble("precio2");
+                double costo= result.getDouble("costo");
+                String observacion= result.getString("observacion");
+                double stock= result.getDouble("stock");
+                
+                p.setCodigo(codigo);
+                p.setCategoria(categoria);                
+                p.setDescripcion(descripcion);
+                p.setPrecio(precio);
+                p.setPrecio2(precio2);
+                p.setCosto(costo);
+                p.setStock(stock);
+                p.setObservacion(observacion);
+                articulos.add(p);
+                
+            	}
+            
+        }catch (SQLException e) {
+				System.out.println(e);
+		}
+       
+        return articulos;
+	}
+	
 	public ArrayList<Articulo> getArticulosBusqueda(String Articulo){
 		ArrayList<Articulo> articulos= new ArrayList<Articulo>();
 		ResultSet result = null;
@@ -405,6 +539,45 @@ public class Conector {
         return articulos;
 	}
 	
+	public ArrayList<Articulo> getArticulosDeliveryBusqueda(String Articulo){
+		ArrayList<Articulo> articulos= new ArrayList<Articulo>();
+		ResultSet result = null;
+		
+        try {
+        		
+            PreparedStatement st = conexion.prepareStatement("select * from ARTICULOS_DELIVERY where descripcion LIKE '%"+Articulo+"%' order by descripcion ASC");
+            result = st.executeQuery();
+            
+            while (result.next()) {
+            	Articulo p = new Articulo();
+                int codigo= result.getInt("codigo");
+                String descripcion= result.getString("descripcion");
+                String categoria= result.getString("categoria");
+                double precio= result.getDouble("precio");
+                double precio2= result.getDouble("precio2");
+                double costo= result.getDouble("costo");
+                String observacion= result.getString("observacion");
+                double stock= result.getDouble("stock");
+                
+                p.setCodigo(codigo);
+                p.setCategoria(categoria);                
+                p.setDescripcion(descripcion);
+                p.setPrecio(precio);
+                p.setPrecio2(precio2);
+                p.setCosto(costo);
+                p.setStock(stock);
+                p.setObservacion(observacion);
+                articulos.add(p);
+                
+            	}
+            
+        }catch (SQLException e) {
+				System.out.println(e);
+		}
+       
+        return articulos;
+	}
+	
 	public ArrayList<Categoria> getCategorias(){
 		ArrayList<Categoria> categorias= new ArrayList<Categoria>();
 		ResultSet result = null;
@@ -412,6 +585,34 @@ public class Conector {
         try {
         		
             PreparedStatement st = conexion.prepareStatement("select * from CATEGORIAS order by descripcion ASC");
+            result = st.executeQuery();
+            
+            while (result.next()) {
+            	Categoria p = new Categoria();
+                String codigo= result.getString("codigo");
+                String descripcion= result.getString("descripcion");
+                
+                p.setCodigo(codigo);              
+                p.setDescripcion(descripcion);
+                categorias.add(p);
+                
+            	}
+            
+        }catch (SQLException e) {
+				System.out.println(e);
+		}
+       
+        return categorias;
+	}
+	
+	
+	public ArrayList<Categoria> getCategoriasDelivery(){
+		ArrayList<Categoria> categorias= new ArrayList<Categoria>();
+		ResultSet result = null;
+		
+        try {
+        		
+            PreparedStatement st = conexion.prepareStatement("select * from CATEGORIAS_DELIVERY order by descripcion ASC");
             result = st.executeQuery();
             
             while (result.next()) {
@@ -526,6 +727,39 @@ public class Conector {
 		return p;
 	}
 	
+	public Articulo getArticuloDelivery(String Articulo) {		
+		ResultSet result = null;
+		Articulo p = null;
+		try {			
+			PreparedStatement st = conexion.prepareStatement("select * from ARTICULOS_DELIVERY where codigo = '"+Articulo+"'");
+			result = st.executeQuery();			
+			
+            p = new Articulo();
+            int codigo= result.getInt("codigo");
+            String descripcion= result.getString("descripcion");
+            String categoria= result.getString("categoria");
+            double precio= result.getDouble("precio");
+            double precio2= result.getDouble("precio2");
+            double costo= result.getDouble("costo");
+            String observacion= result.getString("observacion");
+            double stock= result.getDouble("stock");
+            
+            p.setCodigo(codigo);
+            p.setCategoria(categoria);                
+            p.setDescripcion(descripcion);
+            p.setPrecio(precio);
+            p.setPrecio2(precio2);
+            p.setCosto(costo);
+            p.setStock(stock);
+            p.setObservacion(observacion);
+        	
+            
+		} catch (SQLException ex) {
+			System.out.println(ex);
+		}
+		return p;
+	}
+	
 	public String getMesero(int Mesa_numero) {		
 		ResultSet result = null;
 		String mesero = null;
@@ -547,6 +781,30 @@ public class Conector {
 		MesaClase p = null;
 		try {			
 			PreparedStatement st = conexion.prepareStatement("select * from SINMESA where numero = '"+Mesa+"'");
+			result = st.executeQuery();			
+			
+            p = new MesaClase();
+            double total= result.getDouble("total");
+            double descuento= result.getDouble("descuento");
+            double recargo= result.getDouble("recargo");
+            String nota= result.getString("observacion");
+            
+            p.setTotal(total);
+            p.setDescuento(descuento);
+            p.setRecargo(recargo);
+            p.setObservacion(nota);
+        	
+		} catch (SQLException ex) {
+			System.out.println(ex);
+		}
+		return p;
+	}
+	
+	public MesaClase getDelivery(int Mesa) {		
+		ResultSet result = null;
+		MesaClase p = null;
+		try {			
+			PreparedStatement st = conexion.prepareStatement("select * from DELIVERY where numero = '"+Mesa+"'");
 			result = st.executeQuery();			
 			
             p = new MesaClase();
@@ -950,6 +1208,15 @@ public class Conector {
 		}
 	}
 	
+	public void eliminarCategoriaDelivery(String Descripcion) {
+		try {
+			 PreparedStatement ps = conexion.prepareStatement("delete from CATEGORIAS_DELIVERY where descripcion='"+Descripcion+"'");
+			 ps.executeUpdate();
+		} catch (SQLException e) {
+			System.out.println(e);
+		}
+	}
+	
 	public void eliminarMesero(String nombre) {
 		try {
 			 PreparedStatement ps = conexion.prepareStatement("delete from MESEROS where nombre='"+nombre+"'");
@@ -1041,6 +1308,29 @@ public class Conector {
 		}
 	}
 	
+	public void modificarArticuloDelivery(Articulo c) {
+		try {
+			
+			String query = "update ARTICULOS_DELIVERY set "+			 
+					"descripcion = '"+c.getDescripcion()+"',"+
+					"precio = '"+c.getPrecio()+"',"+
+					"costo = '"+c.getCosto()+"',"+
+					"categoria = '"+c.getCategoria()+"',"+
+					"stock = '"+c.getStock()+"',"+
+					"observacion = '"+c.getObservacion()+"' "+
+					"WHERE codigo = '"+c.getCodigo()+"'";
+					
+					
+			 PreparedStatement ps = conexion.prepareStatement(query);
+			 
+			 			 
+			 
+				    ps.executeUpdate();
+		} catch (SQLException e) {
+			System.out.println(e);
+		}
+	}
+	
 	public void modificarMesa(MesaClase c) {
 		try {
 			
@@ -1086,6 +1376,22 @@ public class Conector {
 		try {
 			
 			String query = "update CATEGORIAS set "+
+					"descripcion = '"+nombre+"' "+
+					"WHERE codigo = '"+codigo+"'";
+					
+			 PreparedStatement ps = conexion.prepareStatement(query);
+
+			 ps.executeUpdate();
+			 
+		} catch (SQLException e) {
+			System.out.println(e);
+		}
+	}
+	
+	public void modificarCategoriaDelivery(String codigo, String nombre) {
+		try {
+			
+			String query = "update CATEGORIAS_DELIVERY set "+
 					"descripcion = '"+nombre+"' "+
 					"WHERE codigo = '"+codigo+"'";
 					

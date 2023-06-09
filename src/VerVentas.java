@@ -149,6 +149,7 @@ public class VerVentas extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				iniciarMontos();
 				iniciarVentas();
+				iniciarVentasValores();
 			}
 		});
 		actualizar.setBounds(396, 32, 130, 20);
@@ -250,7 +251,7 @@ public class VerVentas extends JFrame {
 		panel_1.add(btnEliminar);
 		
 		JScrollPane scrollPane_1 = new JScrollPane();
-		scrollPane_1.setBounds(1015, 82, 239, 445);
+		scrollPane_1.setBounds(1015, 82, 239, 466);
 		contentPane.add(scrollPane_1);
 		
 		table_1 = new JTable();
@@ -269,6 +270,8 @@ public class VerVentas extends JFrame {
 	}
 	
 	public void iniciarVentasValores() {
+		
+		
 		
 		modeloValores = new DefaultTableModel();
 				

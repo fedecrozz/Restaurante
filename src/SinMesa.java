@@ -103,6 +103,7 @@ public class SinMesa extends JFrame {
 	/**
 	 * Create the frame.
 	 * @param NumeroMesa 
+	 * @param tipo 
 	 */
 	public SinMesa(Principal p,int NumeroMesa) {
 		setResizable(false);
@@ -261,7 +262,7 @@ public class SinMesa extends JFrame {
 		btnNewButton.setBounds(1094, 7, 140, 41);
 		panel_2.add(btnNewButton);
 		
-		mesa = new JLabel("Sin Mesa / Delivery");
+		mesa = new JLabel("Sin Mesa");
 		mesa.setHorizontalAlignment(SwingConstants.LEFT);
 		mesa.setForeground(Color.WHITE);
 		mesa.setFont(new Font("Segoe UI Semibold", Font.BOLD, 14));

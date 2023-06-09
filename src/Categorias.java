@@ -151,12 +151,16 @@ public class Categorias extends JFrame {
 		if(tabla_categorias.getSelectedRow()<0) {
 			JOptionPane.showMessageDialog(null, "Debe seleccionar una categoria antes");
 		}else {
-			
+			String categoria_anterior = tabla_categorias.getValueAt(tabla_categorias.getSelectedRow(), 1).toString();
 			String codigo = tabla_categorias.getValueAt(tabla_categorias.getSelectedRow(), 0).toString();
 			String nombre = JOptionPane.showInputDialog("Ingrese el nuevo nombre de la categoria");
 			
 			con.conectar();
 			con.modificarCategoria(codigo,nombre.toUpperCase());
+			con.cerrarConexion();
+			
+			con.conectar();
+			con.ejecutarQuery("UPDATE ARTICULOS set categoria = '"+nombre.toUpperCase()+"' where categoria = '"+categoria_anterior+"'");
 			con.cerrarConexion();
 			
 			JOptionPane.showMessageDialog(null, "Categoria modificada correctamente");
