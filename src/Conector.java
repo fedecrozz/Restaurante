@@ -946,6 +946,50 @@ public class Conector {
 		
 	}
 	
+	public ArrayList<ArticuloMesa> getArticulosMesaDelivery(int numeroMesa){
+		ArrayList<ArticuloMesa> articulosMesa = new ArrayList<ArticuloMesa>();
+		ResultSet result = null;
+		ArticuloMesa a = null;
+		try {
+    		
+            PreparedStatement st = conexion.prepareStatement("select * from ARTICULOS_MESA where mesa_numero ='-1'");
+            result = st.executeQuery();
+            
+            while (result.next()) {
+            	a = new ArticuloMesa();
+                int mesa_numero = result.getInt("mesa_numero");
+                String hora= result.getString("hora");
+                String articulo_codigo= result.getString("articulo_codigo");
+                String articulo_descripcion= result.getString("articulo_descripcion");
+                double cantidad= result.getDouble("cantidad");  
+                double precio = result.getDouble("precio");
+                double total= result.getDouble("total");
+                String observacion= result.getString("observacion");
+                int item_numero = result.getInt("item_numero");
+                
+                a.setMesa_numero(mesa_numero);
+                a.setArticulo_codigo(articulo_codigo);
+                a.setArticulo_descripcion(articulo_descripcion);
+                a.setHora(hora);
+                a.setCantidad(cantidad);
+                a.setPrecio(precio);
+                a.setTotal(total);
+                a.setObservacion(observacion);
+                a.setItem_numero(item_numero);
+                
+                
+                articulosMesa.add(a);
+            	}
+            	
+        }catch (SQLException e) {
+        	System.out.println(e);
+            }
+       
+        return articulosMesa;
+		
+		
+	}
+	
 	public ArrayList<ArticuloMesa> getArticulosSinMesa(int numeroMesa){
 		ArrayList<ArticuloMesa> articulosMesa = new ArrayList<ArticuloMesa>();
 		ResultSet result = null;
@@ -1600,7 +1644,7 @@ public class Conector {
 		ResultSet result = null;
 		
 		try {
-            PreparedStatement st = conexion.prepareStatement("SELECT sum(precio) FROM VENTAS where fecha between '"+fechaDesde+"' and '"+fechaHasta+"' and mesa_numero = 0");
+            PreparedStatement st = conexion.prepareStatement("SELECT sum(precio) FROM VENTAS where fecha between '"+fechaDesde+"' and '"+fechaHasta+"' and mesa_numero = -1");
             result = st.executeQuery();
             monto =result.getDouble("sum(precio)");            
         }catch (SQLException e) {

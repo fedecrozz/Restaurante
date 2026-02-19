@@ -148,7 +148,7 @@ public class CerrarDelivery extends JFrame {
 	public void cerrarMesa() {
 		table.editCellAt(0, 0);
 		Venta v= new Venta();
-		v.setMesa_numero(mesaClase.getNumero());
+		v.setMesa_numero(-1);
 		v.setPrecio(mesaClase.getTotal());
 		v.setFecha(getFechaByDate(new Date()));
 		v.setHora(getHora());
@@ -194,7 +194,7 @@ public class CerrarDelivery extends JFrame {
 	
 	public void guardarArticulosVenta() {
 		con.conectar();
-		ArrayList<ArticuloMesa> articulos = con.getArticulosMesa(mesaClase.getNumero());	
+		ArrayList<ArticuloMesa> articulos = con.getArticulosMesaDelivery(mesaClase.getNumero());	
 		con.cerrarConexion();
 		
 		con.conectar();		
@@ -230,7 +230,7 @@ public class CerrarDelivery extends JFrame {
 		ArrayList<String> valores = con.getValores();
 		con.cerrarConexion();
 		
-		String[] columnNames = {"Valor", "Monto", "Acción"};
+		String[] columnNames = {"Valor", "Monto", "Acciï¿½n"};
 		
 		Object[][] data = new Object[valores.size()][columnNames.length];
 		
@@ -248,7 +248,7 @@ public class CerrarDelivery extends JFrame {
             }
         };
 
-        int rowHeight = 50; // Altura en píxeles
+        int rowHeight = 50; // Altura en pï¿½xeles
         table.setRowHeight(rowHeight);
         
         table.setModel(tableModel);
@@ -269,14 +269,14 @@ public class CerrarDelivery extends JFrame {
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         String nombre = (String) table.getValueAt(row, 0); // Obtener el valor de la primera columna
-        setText("Todo " + nombre); // Concatenar el nombre en el texto del botón
+        setText("Todo " + nombre); // Concatenar el nombre en el texto del botï¿½n
         
         // Verificar si hay texto en la segunda columna
         String monto = (String) table.getValueAt(row, 1);
         if (monto != null && !monto.isEmpty()) {
-            setEnabled(false); // Deshabilitar el botón si hay texto en la segunda columna
+            setEnabled(false); // Deshabilitar el botï¿½n si hay texto en la segunda columna
         } else {
-            setEnabled(true); // Habilitar el botón si no hay texto en la segunda columna
+            setEnabled(true); // Habilitar el botï¿½n si no hay texto en la segunda columna
         }
         
         return this;
@@ -295,12 +295,12 @@ public class CerrarDelivery extends JFrame {
             button = new JButton();
             button.setOpaque(true);
 
-            // Agregar ActionListener para responder a los clics en el botón
+            // Agregar ActionListener para responder a los clics en el botï¿½n
             button.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     fireEditingStopped();
-                    // Ejecutar el método correspondiente al botón clickeado
+                    // Ejecutar el mï¿½todo correspondiente al botï¿½n clickeado
                     int selectedRow = table.getSelectedRow();
                     if (selectedRow != -1) {
                         // Obtener los datos de la fila seleccionada
@@ -325,9 +325,9 @@ public class CerrarDelivery extends JFrame {
             // Verificar si hay texto en la segunda columna
             String monto = (String) table.getValueAt(row, 1);
             if (monto != null && !monto.isEmpty()) {
-                button.setEnabled(false); // Deshabilitar el botón si hay texto en la segunda columna
+                button.setEnabled(false); // Deshabilitar el botï¿½n si hay texto en la segunda columna
             } else {
-                button.setEnabled(true); // Habilitar el botón si no hay texto en la segunda columna
+                button.setEnabled(true); // Habilitar el botï¿½n si no hay texto en la segunda columna
             }
             
             return button;
@@ -336,10 +336,10 @@ public class CerrarDelivery extends JFrame {
         @Override
         public Object getCellEditorValue() {
             if (clicked) {
-                // Si se hizo clic en el botón
+                // Si se hizo clic en el botï¿½n
                 return label;
             } else {
-                // Si no se hizo clic en el botón
+                // Si no se hizo clic en el botï¿½n
                 return null;
             }
         }
@@ -377,7 +377,7 @@ public class CerrarDelivery extends JFrame {
     	//guarda la venta con un unico valor 
     	
     	Venta v= new Venta();
-		v.setMesa_numero(mesaClase.getNumero());
+		v.setMesa_numero(-1);
 		v.setPrecio(mesaClase.getTotal());
 		v.setFecha(getFechaByDate(new Date()));
 		v.setHora(getHora());
@@ -445,11 +445,11 @@ public class CerrarDelivery extends JFrame {
     		ticket.setText(ticket.getText() + "----------------------------------------------------------------\n");
     		ticket.setText(ticket.getText() + "Fecha: "+getFecha()+" "+getHora()+"\n");
     		ticket.setText(ticket.getText() + "DELIVERY \n");
-    		ticket.setText(ticket.getText() + "Venta N°: "+ultimo+"\n");
+    		ticket.setText(ticket.getText() + "Venta Nï¿½: "+ultimo+"\n");
             ticket.setText(ticket.getText() + "----------------------------------------------------------------\n");
             
             con.conectar();
-            ArrayList<ArticuloMesa> articulos = con.getArticulosMesa(mesaClase.getNumero());
+            ArrayList<ArticuloMesa> articulos = con.getArticulosMesa(-1);
             con.cerrarConexion();
             
             ticket.setText(ticket.getText() + "Art\t\t    Precio\n");
@@ -493,7 +493,7 @@ public class CerrarDelivery extends JFrame {
 
     public String limitarLongitud(String texto,int longitud) {
         if (texto.length() >= longitud) {
-            return texto.substring(0, longitud); // Limitar el tamaño a 30 caracteres
+            return texto.substring(0, longitud); // Limitar el tamaï¿½o a 30 caracteres
         } else {
             String formato = "%-"+longitud+"s"; // Formato para agregar espacios al final
             return String.format(formato, texto); // Agregar espacios si es necesario

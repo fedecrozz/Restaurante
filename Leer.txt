@@ -1,0 +1,8 @@
+18/02/2026
+
+-Corrección en base de datos. Faltaban las tablas ARTICULOS_DELIVERY, CATEGORIAS_DELIVERY y DELIVERY.
+
+
+19/02/2026
+
+-Corrección en aplicación. Ahora Delivery es la mesa -1. Se ajustó impresión de tickets, artículos de Delivery.

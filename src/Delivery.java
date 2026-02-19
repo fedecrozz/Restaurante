@@ -550,8 +550,8 @@ public class Delivery extends JFrame {
 			con.conectar();
 			a.setArticulo_descripcion(con.getArticuloDelivery(""+codigo).getDescripcion());
 			a.setCantidad(1);
-			a.setPrecio(con.getArticulo(""+codigo).getPrecio());
-			a.setTotal(con.getArticulo(""+codigo).getPrecio());
+			a.setPrecio(con.getArticuloDelivery(""+codigo).getPrecio());
+			a.setTotal(con.getArticuloDelivery(""+codigo).getPrecio());
 			con.cerrarConexion();
 			
 			con.conectar();
